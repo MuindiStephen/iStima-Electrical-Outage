@@ -2,5 +2,6 @@ package com.example.istima
 
 import androidx.compose.ui.unit.dp
 
-
-val buttonCornerRadius = 2.dp
+class Constants {
+    val buttonCornerRadius = 2.dp
+}

@@ -1,12 +1,12 @@
 package com.example.istima.views
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,77 +33,86 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.istima.R
-import com.example.istima.ui.theme.IStimaTheme
 import com.example.istima.ui.theme.KplcDarkGreen
-
-val cornerShape = 1.dp
-val pagePadding = 20.dp
-val elementHeight = 60.dp
+import com.example.istima.ui.theme.KplcLightGreen
+import com.example.istima.ui.theme.LightRed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(navController: NavHostController) {
+fun NewReport(navController: NavHostController) {
+    val cornerShape = 1.dp
+    val pagePadding = 20.dp
+    val elementHeight = 60.dp
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val sendIcon: Painter = painterResource(id = R.mipmap.send_icon)
 
-    val googleIcon: Painter = painterResource(id = R.mipmap.google_icon)
-    val appleIcon: Painter = painterResource(id = R.mipmap.apple_icon)
-
+    var description by remember {
+        mutableStateOf("")
+    }
     Column(
         modifier = Modifier
+            .background(LightRed)
             .padding(pagePadding)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxWidth(),
+//        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text("Login to iStima", fontWeight = FontWeight.W400, fontSize = 23.sp)
-        Spacer(modifier = Modifier
-            .padding(pagePadding)
-            .height(pagePadding))
-        OutlinedTextField(
-            value = email,
-            singleLine = true,
+        Spacer(modifier = Modifier.height(elementHeight),)
+        Box(
             modifier = Modifier
-                .height(elementHeight)
-                .fillMaxWidth(),
-            onValueChange = { newText: String -> email = newText },
-            textStyle = TextStyle(color = Color.DarkGray),
-            placeholder = { Text("Email") },
-            shape = RoundedCornerShape(cornerShape)
-        )
-        Spacer(Modifier.height(pagePadding/2))
-        OutlinedTextField(
-            value = password,
-            singleLine = true,
-            modifier = Modifier
-                .height(elementHeight)
-                .fillMaxWidth(),
-            onValueChange = { newText: String -> password = newText },
-            textStyle = TextStyle(color = Color.DarkGray),
-            placeholder = { Text("Password") },
-            shape = RoundedCornerShape(cornerShape)
-        )
-        Spacer(modifier = Modifier.height(pagePadding))
-        Button(
-            onClick = { navController.navigate("feed") },
-            shape = RoundedCornerShape(cornerShape),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(elementHeight),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = KplcDarkGreen,
-                contentColor = Color.White
-            )
+                .align(alignment = Alignment.CenterHorizontally)
         ) {
-            Text("LOGIN")
+            Text(
+                "Post a Report",
+                fontWeight = FontWeight.W700,
+                fontSize = 20.sp,
+            )
         }
-        Spacer(Modifier.height(pagePadding/2))
+        Spacer(modifier = Modifier.height(elementHeight),)
+        Box {
+            Text(
+                "Describe the situation (optional)",
+                textAlign = TextAlign.Start
+            )
+        }
+        Spacer(modifier = Modifier.height(pagePadding / 4),)
+        OutlinedTextField(
+            value = description,
+            singleLine = true,
+            modifier = Modifier
+                .height(elementHeight)
+                .fillMaxWidth(),
+            onValueChange = {  },
+            textStyle = TextStyle(color = Color.DarkGray),
+            shape = RoundedCornerShape(cornerShape),
+            placeholder = { Text(text = "Describe the situation (optional)") }
+        )
+        Spacer(modifier = Modifier.height(pagePadding),)
+        Box {
+            Text(
+                "Describe the situation",
+                textAlign = TextAlign.Start
+            )
+        }
+        Spacer(modifier = Modifier.height(pagePadding / 4),)
+        OutlinedTextField(
+            value = description,
+            singleLine = true,
+            modifier = Modifier
+                .height(elementHeight)
+                .fillMaxWidth(),
+            onValueChange = {  },
+            textStyle = TextStyle(color = Color.DarkGray),
+            shape = RoundedCornerShape(cornerShape)
+        )
+        Spacer(modifier = Modifier.height(elementHeight))
+
+        Spacer(modifier = Modifier.height(pagePadding / 4),)
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -115,63 +125,46 @@ fun LoginPage(navController: NavHostController) {
                     .weight(1f)
                     .height(elementHeight),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color.DarkGray,
+                    containerColor = Color.Transparent,
+                    contentColor = Color.Red,
                 ),
-                border= BorderStroke(1.dp, Color.LightGray),
+//                border = BorderStroke(1.dp, Color.LightGray),
             ) {
-                Row {
-                    Icon(
-                        painter = googleIcon,
-                        contentDescription = null, // Set a proper content description if necessary
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(pagePadding / 4))
-                    Text("GOOGLE")
-                }
+                Text("CANCEL")
             }
             Spacer(modifier = Modifier.width(pagePadding / 4))
             Button(
                 onClick = { /*TODO*/ },
                 shape = RoundedCornerShape(cornerShape),
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(2f)
                     .height(elementHeight),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color.DarkGray,
+                    containerColor = KplcLightGreen,
+                    contentColor = Color.White,
                 ),
-                border= BorderStroke(1.dp, Color.LightGray),
+                border = BorderStroke(1.dp, KplcDarkGreen),
             ) {
                 Row {
+                    Text("SEND", fontWeight = FontWeight.Bold, color = KplcDarkGreen)
+                    Spacer(modifier = Modifier.width(pagePadding / 4))
                     Icon(
-                        painter = appleIcon,
+                        painter = sendIcon,
                         contentDescription = null, // Set a proper content description if necessary
                         tint = Color.Unspecified,
                         modifier = Modifier.size(20.dp)
                     )
-                    Spacer(modifier = Modifier.width(pagePadding / 4))
-                    Text("APPLE")
                 }
             }
         }
-        Spacer(modifier = Modifier.height(elementHeight))
-        Text(
-            text = "Create Account",
-            Modifier
-                .clickable {
-                    navController.navigate("register")
-                },
-            color = Color.Blue
-        )
     }
 }
 
 @Preview(showSystemUi = true)
 @Composable
-fun GreetingPreview() {
+fun GreetingPreview2() {
     var ctx = LocalContext.current
     var navController: NavHostController = NavHostController(ctx)
-    LoginPage(navController)
+
+    NewReport(navController)
 }

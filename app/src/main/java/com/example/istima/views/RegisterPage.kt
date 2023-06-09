@@ -30,17 +30,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.istima.R
+import com.example.istima.controllers.Routes
+import com.example.istima.ui.theme.KplcDarkGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterPage() {
+fun RegisterPage(navController: NavHostController) {
 
     val googleIcon: Painter = painterResource(id = R.mipmap.google_icon)
     val appleIcon: Painter = painterResource(id = R.mipmap.apple_icon)
@@ -131,12 +135,16 @@ fun RegisterPage() {
         )
         Spacer(Modifier.height(pagePadding))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { navController.navigate("feed") },
             shape = RoundedCornerShape(cornerShape),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = pagePadding / 2)
                 .height(elementHeight),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = KplcDarkGreen,
+                contentColor = Color.White
+            )
         ) {
             Text("SIGN UP")
         }
@@ -199,6 +207,7 @@ fun RegisterPage() {
             text = "Log in",
             Modifier
                 .clickable {
+                    navController.navigate("login")
                 },
             color = Color.Blue
         )
@@ -208,5 +217,8 @@ fun RegisterPage() {
 @Preview(showSystemUi = true)
 @Composable
 fun RegisterPreview() {
-    RegisterPage()
+
+    var ctx = LocalContext.current
+    var navController: NavHostController = NavHostController(ctx)
+    RegisterPage(navController)
 }

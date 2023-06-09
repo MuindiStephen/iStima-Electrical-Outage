@@ -12,7 +12,8 @@ val Pink40 = Color(0xFF7D5260)
 
 val KplcBlue = Color(0xFF014A8B)
 val KplcYellow = Color(0xFFF7C901)
-val KplcGreen = Color(0xFF058C54)
+val KplcDarkGreen = Color(0xFF058C50)
+val KplcLightGreen = Color(0x0F058C50)
 
 val LightRed = Color(0xFFF8F8F8)
 val WhiteSmoke = Color(0xFFF8FFFF)
