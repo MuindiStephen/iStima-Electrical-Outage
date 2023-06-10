@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -39,6 +41,7 @@ fun FeedPage(navController: NavController) {
 
     Column(
         modifier = Modifier
+            .verticalScroll(rememberScrollState())
             .background(LightRed)
             .padding(20.dp)
     ) {
@@ -132,10 +135,10 @@ fun PostCard() {
                 Icon(
                     painter = locationIcon,
                     contentDescription = null,
-                    tint = Color.Unspecified,
+                    tint = Color.DarkGray,
                     modifier = Modifier
-                        .size(13.dp)
                         .padding(0.dp)
+                        .size(13.dp)
                 )
                 Text(
                     " Marakaru, Bungoma",

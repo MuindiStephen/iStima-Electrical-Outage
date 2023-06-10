@@ -15,7 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.istima.controllers.Routes
+import com.example.istima.utils.Routes
 import com.example.istima.ui.theme.IStimaTheme
 import com.example.istima.views.FeedPage
 import com.example.istima.views.LoginPage
@@ -43,7 +43,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

@@ -1,4 +1,4 @@
-package com.example.istima.controllers
+package com.example.istima.utils
 
 sealed class Routes(val route: String) {
 

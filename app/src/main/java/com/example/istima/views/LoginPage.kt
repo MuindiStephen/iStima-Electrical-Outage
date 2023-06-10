@@ -90,7 +90,7 @@ fun LoginPage(navController: NavHostController) {
         )
         Spacer(modifier = Modifier.height(pagePadding))
         Button(
-            onClick = { navController.navigate("feed") },
+            onClick = { navController.navigate("main") },
             shape = RoundedCornerShape(cornerShape),
             modifier = Modifier
                 .fillMaxWidth()
