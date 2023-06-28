@@ -7,6 +7,7 @@ sealed class Routes(val route: String) {
     object MainPage: Routes("main")
     object FeedPage: Routes("feed")
     object NewReport: Routes("newReport")
+    object SplashScreen: Routes("splash")
 //    object FeedPage: Routes("feed") {
 //        fun createRoute(macAddress: String) = "chat/$macAddress"
 //    }

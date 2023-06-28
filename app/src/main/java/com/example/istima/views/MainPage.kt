@@ -6,19 +6,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.istima.views.bottomnav.BottomBar
-import com.example.istima.views.bottomnav.BottomNavGraph
+import com.example.istima.views.components.bottomnav.BottomBar
+import com.example.istima.views.components.bottomnav.BottomNavGraph
 
 @Composable
 fun MainPage(navController: NavHostController) {
-    val navController = rememberNavController()
+    val bottomNavController = rememberNavController()
 
     Scaffold(
-        bottomBar = { BottomBar(navController = navController) }
+        bottomBar = { BottomBar(navController = bottomNavController) }
     ) {
         Modifier.padding(it)
         BottomNavGraph(
-            navController = navController
+            navController = bottomNavController
         )
     }
 }

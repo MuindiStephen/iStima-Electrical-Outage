@@ -1,4 +1,4 @@
-package com.example.istima.views.bottomnav
+package com.example.istima.views.components.bottomnav
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -28,14 +28,14 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.istima.ui.theme.LightRed
-import com.example.istima.views.pagePadding
+import com.example.istima.views.auth.pagePadding
 
 @Composable
 fun BottomBar(navController: NavHostController) {
     val screens = listOf(
         BottomBarScreen.Feed,
         BottomBarScreen.Report,
-        BottomBarScreen.Profile
+        BottomBarScreen.Map
     )
 
     val navStackBackEntry by navController.currentBackStackEntryAsState()
@@ -70,7 +70,8 @@ fun RowScope.AddItem(
     val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
 
     val background =
-        if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else Color.Transparent
+//        if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else Color.Transparent
+        if (selected) Color.White else Color.Transparent
 
     val contentColor =
         if (selected) MaterialTheme.colorScheme.primary else Color.Gray

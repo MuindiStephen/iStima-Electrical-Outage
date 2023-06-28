@@ -32,6 +32,7 @@ import com.example.istima.R
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.ui.theme.LightRed
 import com.example.istima.ui.theme.WhiteSmoke
+import com.example.istima.views.auth.pagePadding
 
 @Composable
 fun FeedPage(navController: NavController) {
@@ -46,52 +47,52 @@ fun FeedPage(navController: NavController) {
             .padding(20.dp)
     ) {
         Text(
-            "Planned Outages",
+            "",
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(pagePadding / 2))
-        Row {
-            Box(
-                Modifier
-                    .clip(RoundedCornerShape(7.dp))
-                    .background(Color(0x5D058C54))
-                    .padding(5.dp)
-            ) {
-                Text(
-                    "Today",
-                    color = KplcDarkGreen,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Spacer(modifier = Modifier.width(pagePadding / 4))
-            Box(
-                Modifier
-                    .clip(RoundedCornerShape(7.dp))
-                    .background(Color.LightGray)
-                    .padding(5.dp)
-            ) {
-                Text(
-                    "Tomorrow",
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(pagePadding/2))
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(WhiteSmoke)
-                .padding(10.dp)
-        ) {
-            PlannedOutageItem()
-            PlannedOutageItem()
-            PlannedOutageItem()
-            PlannedOutageItem()
-            PlannedOutageItem()
-            PlannedOutageItem()
-        }
-        Spacer(modifier = Modifier.height(pagePadding))
+//        Row {
+//            Box(
+//                Modifier
+//                    .clip(RoundedCornerShape(7.dp))
+//                    .background(Color(0x5D058C54))
+//                    .padding(5.dp)
+//            ) {
+//                Text(
+//                    "Today",
+//                    color = KplcDarkGreen,
+//                    fontWeight = FontWeight.Bold
+//                )
+//            }
+//            Spacer(modifier = Modifier.width(pagePadding / 4))
+//            Box(
+//                Modifier
+//                    .clip(RoundedCornerShape(7.dp))
+//                    .background(Color.LightGray)
+//                    .padding(5.dp)
+//            ) {
+//                Text(
+//                    "Tomorrow",
+//                    color = Color.DarkGray,
+//                    fontWeight = FontWeight.Bold
+//                )
+//            }
+//        }
+//        Spacer(modifier = Modifier.height(pagePadding/2))
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .background(WhiteSmoke)
+//                .padding(10.dp)
+//        ) {
+//            PlannedOutageItem()
+//            PlannedOutageItem()
+//            PlannedOutageItem()
+//            PlannedOutageItem()
+//            PlannedOutageItem()
+//            PlannedOutageItem()
+//        }
+//        Spacer(modifier = Modifier.height(pagePadding))
         Text(
             "Feed",
             fontWeight = FontWeight.Bold
@@ -159,24 +160,24 @@ fun PostCard() {
     }
 }
 
-@Composable
-fun PlannedOutageItem() {
-    Box {
-        Row {
-            Text(
-                text = "- Kibabii Area, Bungoma "
-            )
-            Text(
-                " · ",
-                fontSize = 16.sp,
-                color = Color.DarkGray
-            )
-            Text(
-                text = " 5pm - 7pm "
-            )
-        }
-    }
-}
+//@Composable
+//fun PlannedOutageItem() {
+//    Box {
+//        Row {
+//            Text(
+//                text = "- Kibabii Area, Bungoma "
+//            )
+//            Text(
+//                " · ",
+//                fontSize = 16.sp,
+//                color = Color.DarkGray
+//            )
+//            Text(
+//                text = " 5pm - 7pm "
+//            )
+//        }
+//    }
+//}
 
 @Preview(showSystemUi = true)
 @Composable

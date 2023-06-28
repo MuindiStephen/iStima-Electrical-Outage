@@ -1,4 +1,4 @@
-package com.example.istima.views.bottomnav
+package com.example.istima.views.components.bottomnav
 
 import com.example.istima.R
 
@@ -23,9 +23,9 @@ sealed class BottomBarScreen(
     )
 
     // for report
-    object Profile: BottomBarScreen(
-        route = "profile",
-        title = "Profile",
+    object Map: BottomBarScreen(
+        route = "map",
+        title = "map",
         icon = R.mipmap.person_icon_foreground
     )
 }
