@@ -13,6 +13,11 @@
         android:theme="@style/Theme.IStima"
         tools:targetApi="31">
         <activity
+            android:name=".views.MapsFeed"
+            android:exported="false"
+            android:label="@string/title_activity_maps_feed"
+            android:theme="@style/Theme.IStima" />
+        <activity
             android:name=".views.NewReport"
             android:exported="false"
             android:label="@string/title_activity_new_report"

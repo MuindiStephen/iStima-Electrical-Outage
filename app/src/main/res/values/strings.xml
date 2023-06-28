@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">iStima</string>
     <string name="title_activity_new_report">NewReport</string>
+    <string name="title_activity_maps_feed">MapsFeed</string>
 </resources>
