@@ -78,6 +78,7 @@ class MainActivity : ComponentActivity() {
 //                    LoginPage()
 //                    FeedPage()
 //                    RegisterPage()
+
                     val navController = rememberNavController()
                     NavigationAppHost(navController = navController, startDestination = startPage)
                 }
