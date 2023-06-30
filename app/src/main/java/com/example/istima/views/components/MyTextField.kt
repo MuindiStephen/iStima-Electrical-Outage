@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import com.example.istima.views.cornerShape
-import com.example.istima.views.elementHeight
+import com.example.istima.views.auth.cornerShape
+import com.example.istima.views.auth.elementHeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

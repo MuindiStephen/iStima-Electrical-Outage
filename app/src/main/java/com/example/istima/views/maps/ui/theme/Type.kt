@@ -1,4 +1,4 @@
-package com.example.istima.views.ui.theme
+package com.example.istima.views.maps.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

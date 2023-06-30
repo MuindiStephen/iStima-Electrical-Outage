@@ -1,4 +1,4 @@
-package com.example.istima.views
+package com.example.istima.views.auth
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,62 +40,31 @@ import androidx.navigation.NavHostController
 import com.example.istima.R
 import com.example.istima.ui.theme.KplcDarkGreen
 
+val cornerShape = 1.dp
+val pagePadding = 20.dp
+val elementHeight = 60.dp
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterPage(navController: NavHostController) {
+fun LoginPage(navController: NavHostController) {
+
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     val googleIcon: Painter = painterResource(id = R.mipmap.google_icon)
     val appleIcon: Painter = painterResource(id = R.mipmap.apple_icon)
 
-    val cornerShape = 1.dp
-    val pagePadding = 20.dp
-    val elementHeight = 60.dp
-
-    var firstname by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-
     Column(
-        verticalArrangement = Arrangement.Center,
         modifier = Modifier
-            .padding(pagePadding),
+            .padding(pagePadding)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Join iStima", fontWeight = FontWeight.W400, fontSize = 23.sp)
+        Text("Login to iStima", fontWeight = FontWeight.W400, fontSize = 23.sp)
         Spacer(modifier = Modifier
             .padding(pagePadding)
             .height(pagePadding))
-        Row {
-            OutlinedTextField(
-                value = firstname,
-                singleLine = true,
-                modifier = Modifier
-                    .height(elementHeight)
-                    .fillMaxWidth()
-                    .weight(1f),
-                onValueChange = { newText: String -> firstname = newText },
-                textStyle = TextStyle(color = Color.DarkGray),
-                placeholder = { Text("First Name") },
-                shape = RoundedCornerShape(cornerShape)
-            )
-            Spacer(modifier = Modifier.width(pagePadding / 4))
-            OutlinedTextField(
-                value = lastName,
-                singleLine = true,
-                modifier = Modifier
-                    .height(elementHeight)
-                    .fillMaxWidth()
-                    .weight(1f),
-                onValueChange = { newText: String -> lastName = newText },
-                textStyle = TextStyle(color = Color.DarkGray),
-                placeholder = { Text("Last Name") },
-                shape = RoundedCornerShape(cornerShape)
-            )
-        }
-        Spacer(Modifier.height(pagePadding/2))
         OutlinedTextField(
             value = email,
             singleLine = true,
@@ -105,7 +76,7 @@ fun RegisterPage(navController: NavHostController) {
             placeholder = { Text("Email") },
             shape = RoundedCornerShape(cornerShape)
         )
-        Spacer(Modifier.height(pagePadding/2))
+        Spacer(Modifier.height(pagePadding /2))
         OutlinedTextField(
             value = password,
             singleLine = true,
@@ -117,34 +88,21 @@ fun RegisterPage(navController: NavHostController) {
             placeholder = { Text("Password") },
             shape = RoundedCornerShape(cornerShape)
         )
-        Spacer(Modifier.height(pagePadding/2))
-        OutlinedTextField(
-            value = confirmPassword,
-            singleLine = true,
-            modifier = Modifier
-                .height(elementHeight)
-                .fillMaxWidth(),
-            onValueChange = { newText: String -> confirmPassword = newText },
-            textStyle = TextStyle(color = Color.DarkGray),
-            placeholder = { Text("Confirm Password") },
-            shape = RoundedCornerShape(cornerShape)
-        )
-        Spacer(Modifier.height(pagePadding))
+        Spacer(modifier = Modifier.height(pagePadding))
         Button(
             onClick = { navController.navigate("main") },
             shape = RoundedCornerShape(cornerShape),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = pagePadding / 2)
                 .height(elementHeight),
             colors = ButtonDefaults.buttonColors(
                 containerColor = KplcDarkGreen,
                 contentColor = Color.White
             )
         ) {
-            Text("SIGN UP")
+            Text("LOGIN")
         }
-        Spacer(Modifier.height(pagePadding/2))
+        Spacer(Modifier.height(pagePadding /2))
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -200,21 +158,20 @@ fun RegisterPage(navController: NavHostController) {
         }
         Spacer(modifier = Modifier.height(elementHeight))
         Text(
-            text = "Log in",
+            text = "Create Account",
             Modifier
                 .clickable {
-                    navController.navigate("login")
+                    navController.navigate("register")
                 },
-            color = Color.Blue
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
 
 @Preview(showSystemUi = true)
 @Composable
-fun RegisterPreview() {
-
+fun GreetingPreview() {
     var ctx = LocalContext.current
     var navController: NavHostController = NavHostController(ctx)
-    RegisterPage(navController)
+    LoginPage(navController)
 }

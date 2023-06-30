@@ -1,7 +1,11 @@
 package com.example.istima.views
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.widget.DatePicker
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,10 +17,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
@@ -42,19 +49,58 @@ import com.example.istima.R
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.ui.theme.KplcLightGreen
 import com.example.istima.ui.theme.LightRed
+import com.example.istima.views.auth.cornerShape
+import com.example.istima.views.auth.elementHeight
+import com.example.istima.views.auth.pagePadding
+import com.google.android.gms.location.LocationServices
+import java.util.Calendar
+import java.util.Date
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewReport(navController: NavHostController) {
-    val cornerShape = 1.dp
-    val pagePadding = 20.dp
-    val elementHeight = 60.dp
 
     val sendIcon: Painter = painterResource(id = R.mipmap.send_icon)
+    val mContext = LocalContext.current
+
+    val fusedLocationProviderClient =
+        remember { LocationServices.getFusedLocationProviderClient(mContext) }
 
     var description by remember {
         mutableStateOf("")
     }
+
+    val mYear: Int
+    val mMonth: Int
+    val mDay: Int
+
+    val mCalendar = Calendar.getInstance()
+
+    mYear = mCalendar.get(Calendar.YEAR)
+    mMonth = mCalendar.get(Calendar.MONTH)
+    mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
+
+    val mHour = mCalendar[Calendar.HOUR_OF_DAY]
+    val mMinute = mCalendar[Calendar.MINUTE]
+
+    mCalendar.time = Date()
+
+    val mDate = remember { mutableStateOf("$mDay/${mMonth+1}/$mYear") }
+    val mTime = remember { mutableStateOf("$mHour:$mMinute") }
+
+    val mDatePickerDialog = DatePickerDialog(
+        mContext,
+        { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
+            mDate.value = "$mDayOfMonth/${mMonth+1}/$mYear"
+        }, mYear, mMonth, mDay
+    )
+
+    val mTimePickerDialog = TimePickerDialog(
+        mContext,
+        {_, mHour : Int, mMinute: Int ->
+            mTime.value = "$mHour:$mMinute"
+        }, mHour, mMinute, false
+    )
+
     Column(
         modifier = Modifier
             .background(LightRed)
@@ -93,26 +139,85 @@ fun NewReport(navController: NavHostController) {
             placeholder = { Text(text = "Describe the situation (optional)") }
         )
         Spacer(modifier = Modifier.height(pagePadding),)
-        Box {
-            Text(
-                "Describe the situation",
-                textAlign = TextAlign.Start
-            )
-        }
-        Spacer(modifier = Modifier.height(pagePadding / 4),)
-        OutlinedTextField(
-            value = description,
-            singleLine = true,
+        Row(
             modifier = Modifier
-                .height(elementHeight)
                 .fillMaxWidth(),
-            onValueChange = {  },
-            textStyle = TextStyle(color = Color.DarkGray),
-            shape = RoundedCornerShape(cornerShape)
-        )
-        Spacer(modifier = Modifier.height(elementHeight))
-
-        Spacer(modifier = Modifier.height(pagePadding / 4),)
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Box(
+                modifier = Modifier.weight(1f)
+            ) {
+                Column() {
+                    Box {
+                        Text(
+                            "Date",
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                    OutlinedTextField(
+                        value = mDate.value,
+                        singleLine = true,
+                        modifier = Modifier
+                            .height(elementHeight),
+                        onValueChange = { },
+                        textStyle = TextStyle(color = Color.DarkGray),
+                        shape = RoundedCornerShape(cornerShape),
+                        trailingIcon = {
+                        IconButton(
+                            onClick = {
+                                mDatePickerDialog.show()
+                            },
+                        ) {
+                            Icon(
+                                Icons.Default.DateRange,
+                                contentDescription = "",
+                                tint = Color.Black
+                            )
+                        }
+                    }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(pagePadding / 4))
+            Box(
+                modifier = Modifier.weight(1f)
+            ) {
+                Column() {
+                    Box {
+                        Text(
+                            "Time",
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                    OutlinedTextField(
+                        value = mTime.value,
+                        singleLine = true,
+                        modifier = Modifier
+                            .height(elementHeight)
+                            .clickable(onClick = {
+                                mTimePickerDialog.show()
+                            }),
+                        onValueChange = { },
+                        textStyle = TextStyle(color = Color.DarkGray),
+                        shape = RoundedCornerShape(cornerShape),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    mTimePickerDialog.show()
+                                },
+                            ) {
+                                Icon(
+                                    Icons.Default.DateRange,
+                                    contentDescription = "",
+                                    tint = Color.Black
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(elementHeight),)
         Row(
             modifier = Modifier
                 .fillMaxWidth(),

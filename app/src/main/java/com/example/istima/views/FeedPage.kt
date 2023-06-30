@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,9 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -32,6 +36,8 @@ import com.example.istima.R
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.ui.theme.LightRed
 import com.example.istima.ui.theme.WhiteSmoke
+import com.example.istima.views.auth.pagePadding
+import com.google.maps.android.compose.GoogleMap
 
 @Composable
 fun FeedPage(navController: NavController) {
@@ -45,57 +51,69 @@ fun FeedPage(navController: NavController) {
             .background(LightRed)
             .padding(20.dp)
     ) {
-        Text(
-            "Planned Outages",
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(pagePadding / 2))
-        Row {
-            Box(
-                Modifier
-                    .clip(RoundedCornerShape(7.dp))
-                    .background(Color(0x5D058C54))
-                    .padding(5.dp)
-            ) {
-                Text(
-                    "Today",
-                    color = KplcDarkGreen,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Spacer(modifier = Modifier.width(pagePadding / 4))
-            Box(
-                Modifier
-                    .clip(RoundedCornerShape(7.dp))
-                    .background(Color.LightGray)
-                    .padding(5.dp)
-            ) {
-                Text(
-                    "Tomorrow",
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(pagePadding/2))
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(WhiteSmoke)
-                .padding(10.dp)
-        ) {
-            PlannedOutageItem()
-            PlannedOutageItem()
-            PlannedOutageItem()
-            PlannedOutageItem()
-            PlannedOutageItem()
-            PlannedOutageItem()
-        }
-        Spacer(modifier = Modifier.height(pagePadding))
+//        Text(
+//            "",
+//            fontWeight = FontWeight.Bold
+//        )
+//        Spacer(modifier = Modifier.height(pagePadding / 2))
+//        Row {
+//            Box(
+//                Modifier
+//                    .clip(RoundedCornerShape(7.dp))
+//                    .background(Color(0x5D058C54))
+//                    .padding(5.dp)
+//            ) {
+//                Text(
+//                    "Today",
+//                    color = KplcDarkGreen,
+//                    fontWeight = FontWeight.Bold
+//                )
+//            }
+//            Spacer(modifier = Modifier.width(pagePadding / 4))
+//            Box(
+//                Modifier
+//                    .clip(RoundedCornerShape(7.dp))
+//                    .background(Color.LightGray)
+//                    .padding(5.dp)
+//            ) {
+//                Text(
+//                    "Tomorrow",
+//                    color = Color.DarkGray,
+//                    fontWeight = FontWeight.Bold
+//                )
+//            }
+//        }
+//        Spacer(modifier = Modifier.height(pagePadding/2))
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .background(WhiteSmoke)
+//                .padding(10.dp)
+//        ) {
+//            PlannedOutageItem()
+//            PlannedOutageItem()
+//            PlannedOutageItem()
+//            PlannedOutageItem()
+//            PlannedOutageItem()
+//            PlannedOutageItem()
+//        }
+//        Spacer(modifier = Modifier.height(pagePadding))
         Text(
             "Feed",
             fontWeight = FontWeight.Bold
         )
+        Spacer(modifier = Modifier.height(pagePadding / 2))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .background(color = KplcDarkGreen)
+                .clip(shape = RoundedCornerShape(cornerShape))
+        ) {
+//            GoogleMap(
+//                modifier = Modifier.fillMaxSize()
+//            )
+        }
         Spacer(modifier = Modifier.height(pagePadding / 2))
         PostCard()
         PostCard()
@@ -159,24 +177,24 @@ fun PostCard() {
     }
 }
 
-@Composable
-fun PlannedOutageItem() {
-    Box {
-        Row {
-            Text(
-                text = "- Kibabii Area, Bungoma "
-            )
-            Text(
-                " · ",
-                fontSize = 16.sp,
-                color = Color.DarkGray
-            )
-            Text(
-                text = " 5pm - 7pm "
-            )
-        }
-    }
-}
+//@Composable
+//fun PlannedOutageItem() {
+//    Box {
+//        Row {
+//            Text(
+//                text = "- Kibabii Area, Bungoma "
+//            )
+//            Text(
+//                " · ",
+//                fontSize = 16.sp,
+//                color = Color.DarkGray
+//            )
+//            Text(
+//                text = " 5pm - 7pm "
+//            )
+//        }
+//    }
+//}
 
 @Preview(showSystemUi = true)
 @Composable
