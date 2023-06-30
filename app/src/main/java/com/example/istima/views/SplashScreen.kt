@@ -28,7 +28,7 @@ fun SplashScreen(navController: NavController?) {
 
     val alpha = 0.6f
 
-    val launcherIcon: Painter = painterResource(id = R.mipmap.ic_launcher)
+//    val launcherIcon: Painter = painterResource(id = R.mipmap.ic_launcher)
 
     Handler().postDelayed({
         navController!!.navigate("login")
@@ -52,14 +52,14 @@ fun SplashScreen(navController: NavController?) {
 
             Spacer(modifier = Modifier.height(pagePadding))
 
-            Image(
-                painter = launcherIcon,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(96.dp)
-                    .graphicsLayer(alpha = alpha),
-                contentScale = ContentScale.Fit
-            )
+//            Image(
+//                painter = launcherIcon,
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .size(96.dp)
+//                    .graphicsLayer(alpha = alpha),
+//                contentScale = ContentScale.Fit
+//            )
 
             Spacer(modifier = Modifier.height(pagePadding))
 
@@ -71,7 +71,6 @@ fun SplashScreen(navController: NavController?) {
             )
         }
     }
-
 }
 
 @Preview

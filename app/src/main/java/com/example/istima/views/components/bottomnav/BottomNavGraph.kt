@@ -8,7 +8,6 @@ import com.example.istima.views.FeedPage
 import com.example.istima.views.maps.MapFeed
 import com.example.istima.views.NewReport
 
-
 @Composable
 fun BottomNavGraph(
     navController: NavHostController

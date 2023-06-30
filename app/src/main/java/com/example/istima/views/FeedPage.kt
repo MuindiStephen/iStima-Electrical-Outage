@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,6 +37,7 @@ import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.ui.theme.LightRed
 import com.example.istima.ui.theme.WhiteSmoke
 import com.example.istima.views.auth.pagePadding
+import com.google.maps.android.compose.GoogleMap
 
 @Composable
 fun FeedPage(navController: NavController) {
@@ -49,11 +51,11 @@ fun FeedPage(navController: NavController) {
             .background(LightRed)
             .padding(20.dp)
     ) {
-        Text(
-            "",
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(pagePadding / 2))
+//        Text(
+//            "",
+//            fontWeight = FontWeight.Bold
+//        )
+//        Spacer(modifier = Modifier.height(pagePadding / 2))
 //        Row {
 //            Box(
 //                Modifier
@@ -100,6 +102,18 @@ fun FeedPage(navController: NavController) {
             "Feed",
             fontWeight = FontWeight.Bold
         )
+        Spacer(modifier = Modifier.height(pagePadding / 2))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .background(color = KplcDarkGreen)
+                .clip(shape = RoundedCornerShape(cornerShape))
+        ) {
+//            GoogleMap(
+//                modifier = Modifier.fillMaxSize()
+//            )
+        }
         Spacer(modifier = Modifier.height(pagePadding / 2))
         PostCard()
         PostCard()
