@@ -1,6 +1,8 @@
 package com.example.istima.views.auth
 
 import android.app.Activity
+import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -44,6 +46,7 @@ import androidx.navigation.NavHostController
 import com.example.istima.R
 import com.example.istima.services.AuthService
 import com.example.istima.ui.theme.KplcDarkGreen
+import com.example.istima.utils.Global
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -68,6 +71,8 @@ fun LoginPage(navController: NavHostController) {
     val auth = Firebase.auth
     val authService = AuthService(context = context)
 
+    val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
     Column(
         modifier = Modifier
             .padding(pagePadding)
@@ -116,19 +121,24 @@ fun LoginPage(navController: NavHostController) {
         Spacer(modifier = Modifier.height(pagePadding))
         Button(
             onClick = {
+                error = ""
                 val status = authService.validateCredentials(
                     email = email,
                     password = password,
                 )
 
-                if(status == "") {
+                if(status == Global.SuccessStatus) {
                     auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(context as Activity) {
                         if (it.isSuccessful) {
-                            Toast.makeText(context, "Successfully Singed In", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Successfully Signed In", Toast.LENGTH_SHORT).show()
+                            editor.putString("userEmail", email)
+                            editor.apply()
+                            sharedPreferences.getString("userEmail", "null")
+                                ?.let { it1 -> Log.d("ABC", it1) }
                             navController.navigate("main")
                         } else {
                             Toast.makeText(context, "Sing In Failed!", Toast.LENGTH_SHORT).show()
-                            error = "Sing Up Failed!. Please try again"
+                            error = "Sign In Failed!. Please try again"
                         }
                     }
                 } else {
