@@ -1,10 +1,13 @@
 package com.example.istima.views.auth
 
+import android.app.Activity
 import com.example.istima.data.FirebaseAuthHelper
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,13 +42,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.istima.R
+import com.example.istima.services.AuthService
 import com.example.istima.ui.theme.KplcDarkGreen
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterPage(navController: NavHostController) {
 
-    var context: Context = LocalContext.current
+    val context: Context = LocalContext.current
 
     val googleIcon: Painter = painterResource(id = R.mipmap.google_icon)
     val appleIcon: Painter = painterResource(id = R.mipmap.apple_icon)
@@ -61,7 +68,11 @@ fun RegisterPage(navController: NavHostController) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
-    var firebaseAuthHelper: FirebaseAuthHelper = FirebaseAuthHelper(context, navController)
+    var error by remember { mutableStateOf("") }
+
+    val auth = Firebase.auth
+    val firebaseAuthHelper = FirebaseAuthHelper(context, navController)
+    val authService = AuthService(context)
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -73,6 +84,15 @@ fun RegisterPage(navController: NavHostController) {
         Spacer(modifier = Modifier
             .padding(pagePadding)
             .height(pagePadding))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+        ) {
+            Text(
+                error,
+                color = Color.Red
+            )
+        }
         Row {
             OutlinedTextField(
                 value = firstname,
@@ -138,7 +158,27 @@ fun RegisterPage(navController: NavHostController) {
         )
         Spacer(Modifier.height(pagePadding))
         Button(
-            onClick = { navController.navigate("main") },
+            onClick = {
+                val status = authService.validateCredentials(
+                    newUser = true, email = email,
+                    password = password,
+                    confirmPassword = confirmPassword
+                )
+
+                if(status == "") {
+                    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(context as Activity) {
+                        if (it.isSuccessful) {
+                            Toast.makeText(context, "Successfully Singed Up", Toast.LENGTH_SHORT).show()
+                            navController.navigate("main")
+                        } else {
+                            Toast.makeText(context, "Sing Up Failed!", Toast.LENGTH_SHORT).show()
+                            error = "Sing Up Failed!. Please try again"
+                        }
+                    }
+                } else {
+                    error = status
+                }
+            },
             shape = RoundedCornerShape(cornerShape),
             modifier = Modifier
                 .fillMaxWidth()
