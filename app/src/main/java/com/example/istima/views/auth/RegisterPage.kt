@@ -80,6 +80,7 @@ fun RegisterPage(navController: NavHostController) {
     val editor = sharedPreferences.edit()
 
     var firebaseFirestoreService = FirebaseFirestoreService()
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier

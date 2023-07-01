@@ -58,9 +58,8 @@ fun FeedPage(navController: NavController) {
     val firebaseFirestoreService = FirebaseFirestoreService()
 
     var email by remember { mutableStateOf("") }
-    var reports by remember{ mutableStateOf(firebaseFirestoreService.getAllReports()) }
+    var reports by remember{ mutableStateOf(List<String>()) }
 //    Log.d("ABC", "reports : ${reports.size}")
-
 
     Handler().postDelayed({
         reports = Global.reports

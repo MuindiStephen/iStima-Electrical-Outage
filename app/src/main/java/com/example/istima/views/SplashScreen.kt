@@ -29,9 +29,9 @@ import com.example.istima.views.auth.pagePadding
 fun SplashScreen(navController: NavController?) {
 
     val context = LocalContext.current
-
+//
     val sharedPrefs: SharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
-
+//
     var startPage = ""
     val alpha = 0.6f
 
@@ -42,8 +42,8 @@ fun SplashScreen(navController: NavController?) {
         startPage = "main"
     }
     Handler().postDelayed({
-        navController!!.navigate("login")
-    }, 3000)
+        navController!!.navigate(startPage)
+    }, 4000)
 
     Box(
         modifier = Modifier.fillMaxSize(),

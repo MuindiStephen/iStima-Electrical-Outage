@@ -1,6 +1,5 @@
 package com.example.istima
 
-
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -71,38 +70,37 @@ class MainActivity : ComponentActivity() {
 
         firebaseFirestoreService.getAllReports()
 
-        if (isFirstLaunch) {
-            startPage = "splash"
-            editor.putBoolean("isFirstLaunch", false)
-            editor.apply()
+//        if (isFirstLaunch) {
+        startPage = "splash"
+//        editor.putBoolean("isFirstLaunch", false)
+//        editor.apply()
 //        } else {
-            if (sharedPrefs.getString("userEmail", "null") == "null") {
-                startPage = "login"
-            } else {
-                Log.d("ABC", "MAIN TO LOAD")
-                startPage = "main"
-            }
+//            if (sharedPrefs.getString("userEmail", "null") == "null") {
+//                startPage = "login"
+//            } else {
+//                Log.d("ABC", "MAIN TO LOAD")
+//                startPage = "main"
+//            }
 //        }
 
-            sharedPrefs.getString("userEmail", "null")?.let { Log.d("ABC", it) }
-            getLocationPermission()
+        sharedPrefs.getString("userEmail", "null")?.let { Log.d("ABC", it) }
+        getLocationPermission()
 
-            setContent {
-                IStimaTheme {
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
-                    ) {
+        setContent {
+            IStimaTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
 //                    LoginPage()
 //                    FeedPage()
 //                    RegisterPage()
 
-                        val navController = rememberNavController()
-                        NavigationAppHost(
-                            navController = navController,
-                            startDestination = startPage
-                        )
-                    }
+                    val navController = rememberNavController()
+                    NavigationAppHost(
+                        navController = navController,
+                        startDestination = startPage
+                    )
                 }
             }
         }
