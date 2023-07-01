@@ -32,6 +32,7 @@ import com.example.istima.views.MainPage
 import com.example.istima.views.NewReport
 import com.example.istima.views.auth.RegisterPage
 import com.example.istima.views.SplashScreen
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 
 const val PREFS_FILE_NAME = "MyAppPrefs"
@@ -45,13 +46,14 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
 
+        FirebaseApp.initializeApp(this)
+
         val sharedPrefs: SharedPreferences = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE)
         val isFirstLaunch = sharedPrefs.getBoolean("isFirstLaunch", true)
 
         var startPage: String = "login"
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser
-
 
         if (isFirstLaunch) {
             startPage = "splash"
@@ -67,6 +69,7 @@ class MainActivity : ComponentActivity() {
                 }
             }, 3000)
         }
+        getLocationPermission()
 
         super.onCreate(savedInstanceState)
         setContent {

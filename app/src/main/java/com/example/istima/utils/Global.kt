@@ -11,5 +11,8 @@ class Global : Application() {
         var myMacAddress: String = ""
         var googleAccount: GoogleSignInAccount? = null
         var signedIn: Boolean = false
+
+        const val SuccessStatus: String = "OK"
+        var anErrorCode: Int = 1
     }
 }
