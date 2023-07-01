@@ -87,7 +87,6 @@ class MainActivity : ComponentActivity() {
             sharedPrefs.getString("userEmail", "null")?.let { Log.d("ABC", it) }
             getLocationPermission()
 
-            super.onCreate(savedInstanceState)
             setContent {
                 IStimaTheme {
                     Surface(
