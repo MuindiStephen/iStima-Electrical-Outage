@@ -58,13 +58,15 @@ fun FeedPage(navController: NavController) {
     val firebaseFirestoreService = FirebaseFirestoreService()
 
     var email by remember { mutableStateOf("") }
-    var reports by remember{ mutableStateOf(List<String>()) }
+    var reports by remember{ mutableStateOf(Global.reports) }
 //    Log.d("ABC", "reports : ${reports.size}")
 
-    Handler().postDelayed({
+//    Handler().postDelayed({
+
+        Log.d("ABC", "GlobalReports = ${Global.reports}")
         reports = Global.reports
         Log.d("ABC", "reports : ${reports.size}")
-    }, 3000)
+//    }, 3000)
 
     Column(
         modifier = Modifier
