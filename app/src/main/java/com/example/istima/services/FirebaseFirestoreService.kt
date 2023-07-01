@@ -51,6 +51,7 @@ class FirebaseFirestoreService {
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
+                    Log.d("ABC", document.data.toString())
                     allReports.add(document.data.toString())
                 }
                 Log.d("ABC", allReports[0])

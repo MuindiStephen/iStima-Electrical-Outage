@@ -63,9 +63,9 @@ fun FeedPage(navController: NavController) {
 
 //    Handler().postDelayed({
 
-        Log.d("ABC", "GlobalReports = ${Global.reports}")
-        reports = Global.reports
-        Log.d("ABC", "reports : ${reports.size}")
+//        Log.d("ABC", "GlobalReports = ${Global.reports}")
+//        reports = Global.reports
+//        Log.d("ABC", "reports : ${reports.size}")
 //    }, 3000)
 
     Column(
@@ -92,26 +92,26 @@ fun FeedPage(navController: NavController) {
 //            )
         }
         Spacer(modifier = Modifier.height(pagePadding / 2))
-        Text("${reports.size}")
-//        LazyColumn(
-//            state = rememberLazyListState()
-//        ) {
-//            items(reports) { report ->
-//                val jsonArray = JSONArray(report)
-//                Log.d("ABC", "kjkj")
-//
-//                for (i in 0 until jsonArray.length()) {
-//                    val jsonObject = jsonArray.getJSONObject(i)
-//
-//                    val name = jsonObject.getString("userName")
-//                    val date = jsonObject.getString("date")
-//                    val time = jsonObject.getString("time")
-//
-////                    PostCard(name = name, date = date, time = time, )
-//                    Text("${reports.size}")
-//                }
-//            }
-//        }
+//        Text("${reports.size}")
+        LazyColumn(
+            state = rememberLazyListState()
+        ) {
+            items(reports) { report ->
+                val jsonArray = JSONArray(report)
+                Log.d("ABC", "kjkj")
+
+                for (i in 0 until jsonArray.length()) {
+                    val jsonObject = jsonArray.getJSONObject(i)
+
+                    val name = jsonObject.getString("userName")
+                    val date = jsonObject.getString("date")
+                    val time = jsonObject.getString("time")
+
+//                    PostCard(name = name, date = date, time = time, )
+                    Text("${reports.size}")
+                }
+            }
+        }
     }
 }
 
