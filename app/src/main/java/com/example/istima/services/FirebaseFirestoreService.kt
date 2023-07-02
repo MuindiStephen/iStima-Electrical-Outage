@@ -15,11 +15,11 @@ class FirebaseFirestoreService {
     fun postReport(
         time: String, date: String,
         latitude: Double, longitude: Double,
-        userEmail: String, userName: String
+        userId: String, userName: String
     ) {
         val post = hashMapOf(
             "userName" to userName,
-            "userID" to userEmail,
+            "userID" to userId,
             "latitude" to latitude,
             "longitude" to longitude,
             "time" to time,
@@ -46,15 +46,41 @@ class FirebaseFirestoreService {
             .add(user)
     }
 
+    fun getUserName(userId: String): String {
+        var userName = ""
+        db.collection("users")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    if (document.data["userID"] == userId) {
+                        userName = document.data["userName"].toString()
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents.", exception)
+            }
+        return userName
+    }
+
     fun getAllReports(): List<String> {
         db.collection("reports")
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    Log.d("ABC", document.data.toString())
-                    allReports.add(document.data.toString())
+//                    Log.d("ABC", document.data)
+                    var report = "{"
+                    for (i in 0 until document.data.size) {
+                        var keys = document.data.keys.toList()
+                        var values = document.data.values.toList()
+                        report += "\"${keys[i]}\": \"${values[i]}\","
+                    }
+                    report = report.dropLast(1)
+                    report += "}"
+                    allReports.add(report)
+//                    parseToJson(document.data.toString()).let { allReports.add(it) }
                 }
-                Log.d("ABC", allReports[0])
+                Log.d("ABC", allReports.toString())
                 Global.reports = allReports
             }
             .addOnFailureListener { exception ->

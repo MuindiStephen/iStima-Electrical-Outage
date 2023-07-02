@@ -17,6 +17,8 @@ class Global : Application() {
         var anErrorCode: Int = 1
 
         var sharedPreferencesName: String = "istima_preferences"
+        var sharedPreferencesUserName = "userName"
+        var sharedPreferencesUserId = "userId"
 
         var reports = ArrayList<String>()
 

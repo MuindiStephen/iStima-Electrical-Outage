@@ -58,7 +58,6 @@ import com.example.istima.views.auth.cornerShape
 import com.example.istima.views.auth.elementHeight
 import com.example.istima.views.auth.pagePadding
 import com.google.android.gms.location.LocationServices
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 import java.util.Calendar
 import java.util.Date
 
@@ -112,10 +111,9 @@ fun NewReport(navController: NavHostController) {
     )
 
     val sharedPreferences = mContext.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
-    val editor = sharedPreferences.edit()
 
-    val uEmail = sharedPreferences.getString("userEmail", "NULL")
-    val uName = sharedPreferences.getString("userName", "NULL")
+    val userId = sharedPreferences.getString(Global.sharedPreferencesUserId, "NULL")
+    val userName = sharedPreferences.getString(Global.sharedPreferencesUserName, "NULL")
 
     Column(
         modifier = Modifier
@@ -296,12 +294,14 @@ fun NewReport(navController: NavHostController) {
             Spacer(modifier = Modifier.width(pagePadding / 4))
             Button(
                 onClick = {
-                    if (uEmail != null) {
-                        firebaseFirestoreService.postReport(
-                            time = mTime.value, date = mDate.value,
-                            latitude = 0.0, longitude = 0.0,
-                            userEmail = uEmail, userName = ""
-                        )
+                    if (userId != null) {
+                        if (userName != null) {
+                            firebaseFirestoreService.postReport(
+                                time = mTime.value, date = mDate.value,
+                                latitude = 0.0, longitude = 0.0,
+                                userId = userId, userName = userName
+                            )
+                        }
                     }
                 },
                 shape = RoundedCornerShape(cornerShape),

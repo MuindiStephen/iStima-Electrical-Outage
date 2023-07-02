@@ -44,6 +44,7 @@ import com.example.istima.ui.theme.WhiteSmoke
 import com.example.istima.utils.Global
 import com.example.istima.views.auth.pagePadding
 import org.json.JSONArray
+import org.json.JSONObject
 
 @Composable
 fun FeedPage(navController: NavController) {
@@ -97,19 +98,20 @@ fun FeedPage(navController: NavController) {
             state = rememberLazyListState()
         ) {
             items(reports) { report ->
-                val jsonArray = JSONArray(report)
-                Log.d("ABC", "kjkj")
 
-                for (i in 0 until jsonArray.length()) {
-                    val jsonObject = jsonArray.getJSONObject(i)
+//                for (i in 0 until jsonArray.length()) {
+                val jsonObject = JSONObject(report)
 
-                    val name = jsonObject.getString("userName")
-                    val date = jsonObject.getString("date")
-                    val time = jsonObject.getString("time")
+                val name = jsonObject.getString("userName")
+                val uid = jsonObject.getString("userId")
+                val date = jsonObject.getString("date")
+                val time = jsonObject.getString("time")
+                val latitude = jsonObject.getString("latitude")
+                val longitude = jsonObject.getString("longitude")
 
 //                    PostCard(name = name, date = date, time = time, )
-                    Text("${reports.size}")
-                }
+                Text("${reports.size}")
+//                }
             }
         }
     }
