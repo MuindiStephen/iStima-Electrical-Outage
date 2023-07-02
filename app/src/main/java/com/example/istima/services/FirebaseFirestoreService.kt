@@ -3,8 +3,10 @@ package com.example.istima.services
 import android.content.Context
 import android.util.Log
 import com.example.istima.utils.Global
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.Collections
 
 class FirebaseFirestoreService(
     private var context: Context
@@ -19,6 +21,8 @@ class FirebaseFirestoreService(
 
     val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
+
+    val mapService = MapService()
 
 
     fun postReport(
@@ -38,13 +42,16 @@ class FirebaseFirestoreService(
             "description" to description
         )
 
-        db.collection("reports")
-            .add(post)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+        val timestamp = Timestamp.now()
+        val documentID = timestamp.toDate().time.toString() + " · " + userId
+        val documentRef = db.collection("reports").document(documentID)
+
+        documentRef.set(post)
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot added with ID: $documentID")
             }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error adding document")
             }
     }
 
@@ -77,7 +84,7 @@ class FirebaseFirestoreService(
             }
     }
 
-    fun setAllReports(): List<String> {
+    fun getAllReports(): List<String> {
         db.collection("reports")
             .get()
             .addOnSuccessListener { result ->
@@ -94,6 +101,8 @@ class FirebaseFirestoreService(
                     allReports.add(report)
                 }
                 Log.d("ABC", allReports.toString())
+                allReports.reverse()
+                mapService.extractCoordinatesFromArrayList(allReports)
                 Global.reports = allReports
             }
             .addOnFailureListener { exception ->

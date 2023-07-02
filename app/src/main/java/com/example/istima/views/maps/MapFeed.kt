@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import com.example.istima.utils.Global
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -30,6 +31,8 @@ fun MapFeed(navController: NavHostController) {
         position = CameraPosition.fromLatLngZoom(LatLng(44.810058, 20.4617586), 16f)
     }
 
+    var coordinates by remember { mutableStateOf(Global.coordinatesList) }
+
     GoogleMap(
         cameraPositionState = cameraPositionState,
         onMapLoaded = {
@@ -37,11 +40,17 @@ fun MapFeed(navController: NavHostController) {
         },
 //        modifier = Modifier.matchParentSize()
     ) {
-        Marker(
-            state = rememberMarkerState(position = LatLng(44.811058, 20.4617586)),
-            title = "Marker1",
-            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
-        )
+
+        coordinates.forEach { coordinate ->
+            val latitude = coordinate.first
+            val longitude = coordinate.second
+
+            Marker(
+                state = rememberMarkerState(position = LatLng(latitude, longitude)),
+                title = "Marker1",
+                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+            )
+        }
     }
     if (!isMapLoaded) {
         AnimatedVisibility(

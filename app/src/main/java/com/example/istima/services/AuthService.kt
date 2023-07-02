@@ -57,4 +57,8 @@ class AuthService(private var context: Context) {
             }
         return Global.SuccessStatus
     }
+
+    fun signOut() {
+        mAuth.signOut()
+    }
 }

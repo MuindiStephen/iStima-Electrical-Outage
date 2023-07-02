@@ -39,12 +39,17 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.istima.R
 import com.example.istima.services.FirebaseFirestoreService
+import com.example.istima.services.MapService
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.ui.theme.LightRed
 import com.example.istima.ui.theme.WhiteSmoke
 import com.example.istima.utils.Global
 import com.example.istima.views.auth.pagePadding
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberMarkerState
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -62,19 +67,10 @@ fun FeedPage(navController: NavController) {
 
     var email by remember { mutableStateOf("") }
     var reports by remember{ mutableStateOf(Global.reports) }
-//    Log.d("ABC", "reports : ${reports.size}")
-
-//    Handler().postDelayed({
-
-//        Log.d("ABC", "GlobalReports = ${Global.reports}")
-//        reports = Global.reports
-//        Log.d("ABC", "reports : ${reports.size}")
-//    }, 3000)
 
     Column(
         modifier = Modifier
             .fillMaxHeight()
-//            .verticalScroll(rememberScrollState())
             .background(LightRed)
             .padding(20.dp)
     ) {
@@ -91,8 +87,17 @@ fun FeedPage(navController: NavController) {
                 .clip(shape = RoundedCornerShape(cornerShape))
         ) {
             GoogleMap(
-                modifier = Modifier.fillMaxSize()
-            )
+                modifier = Modifier.fillMaxSize(),
+                onMapClick = {
+                    navController.navigate("map")
+                }
+            ) {
+                Marker(
+                    state = rememberMarkerState(position = LatLng(44.811058, 20.4617586)),
+                    title = "Marker1",
+                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+                )
+            }
         }
         Spacer(modifier = Modifier.height(pagePadding / 2))
 //        Text("${reports.size}")
@@ -101,28 +106,36 @@ fun FeedPage(navController: NavController) {
         ) {
             items(reports) { report ->
 
-//                for (i in 0 until jsonArray.length()) {
                 val jsonObject = JSONObject(report)
 
                 val name = jsonObject.getString("userName")
+                val description = jsonObject.getString("description")
                 val uid = jsonObject.getString("userID")
                 val date = jsonObject.getString("date")
                 val time = jsonObject.getString("time")
                 val latitude = jsonObject.getString("latitude")
                 val longitude = jsonObject.getString("longitude")
 
-                PostCard(name = name, date = date, time = time, )
-//                Text("${reports.size}")
-//                }
+                PostCard(
+                    name = name, date = date, time = time,
+                    description = description, latitude = latitude.toDouble(),
+                    longitude = longitude.toDouble())
             }
         }
     }
 }
 
 @Composable
-fun PostCard(name: String, date: String, time: String) {
+fun PostCard(
+    name: String, date: String,
+    time: String, description: String = "",
+    latitude: Double, longitude: Double
+) {
 
+    val context = LocalContext.current
     val locationIcon = painterResource(id = R.mipmap.location_icon)
+
+    var mapService = MapService()
 
     Box(
         modifier = Modifier
@@ -158,14 +171,15 @@ fun PostCard(name: String, date: String, time: String) {
                         .size(13.dp)
                 )
                 Text(
-                    " Marakaru, Bungoma",
+//                    mapService.getNameFromCoordinates(context = context, lat = latitude, long = longitude),
+                    "$latitude, $longitude",
                     fontSize = 12.sp,
                     color = Color.DarkGray
                 )
             }
             Spacer(Modifier.height(pagePadding / 2))
             Text(
-                "There has be no power for 40 hours. "
+                description
             )
             Spacer(Modifier.height(pagePadding))
             Divider(

@@ -24,6 +24,8 @@ class Global : Application() {
         var sharedPreferencesLatitude = "latitude"
         var sharedPreferencesLongitude = "longitude"
 
+        var coordinatesList = ArrayList<Pair<Double, Double>>()
+
         var reports = ArrayList<String>()
 
     }

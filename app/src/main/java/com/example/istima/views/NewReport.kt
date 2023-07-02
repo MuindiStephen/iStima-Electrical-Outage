@@ -61,6 +61,7 @@ import com.example.istima.views.auth.pagePadding
 import com.google.android.gms.location.LocationServices
 import java.util.Calendar
 import java.util.Date
+import java.util.logging.Handler
 
 @Composable
 fun NewReport(navController: NavHostController) {
@@ -314,7 +315,10 @@ fun NewReport(navController: NavHostController) {
                                 description = description
                             )
 
-//                            navController.navigate("main")
+                            android.os.Handler().postDelayed({
+                                firebaseFirestoreService.getAllReports()
+                            }, 4000)
+                            navController.navigate("feed")
                         }
                     }
                 },

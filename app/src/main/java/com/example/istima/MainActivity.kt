@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
 
         val firebaseFirestoreService = FirebaseFirestoreService(this)
 
-        firebaseFirestoreService.setAllReports()
+        firebaseFirestoreService.getAllReports()
 
         var startPage = "splash"
         getLocationPermission()
@@ -156,8 +156,8 @@ fun NavigationAppHost(navController: NavHostController, startDestination: String
         composable(Routes.MainPage.route) { MainPage(navController) }
         composable(Routes.LoginPage.route) { LoginPage(navController) }
         composable(Routes.RegisterPage.route) { RegisterPage(navController) }
-        composable(Routes.FeedPage.route) { FeedPage(navController) }
-        composable(Routes.NewReport.route) { NewReport(navController) }
+//        composable(Routes.FeedPage.route) { FeedPage(navController) }
+//        composable(Routes.NewReport.route) { NewReport(navController) }
         composable(Routes.SplashScreen.route) { SplashScreen(navController) }
     }
 }
