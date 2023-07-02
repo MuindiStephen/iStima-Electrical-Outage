@@ -138,6 +138,7 @@ fun FeedPage(navController: NavController) {
                     longitude = longitude.toDouble())
             }
         }
+        Spacer(modifier = Modifier.height(elementHeight).padding(elementHeight))
     }
 }
 

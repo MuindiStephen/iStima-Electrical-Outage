@@ -35,7 +35,8 @@ fun BottomBar(navController: NavHostController) {
     val screens = listOf(
         BottomBarScreen.Feed,
         BottomBarScreen.Report,
-        BottomBarScreen.Map
+        BottomBarScreen.Map,
+        BottomBarScreen.Profile
     )
 
     val navStackBackEntry by navController.currentBackStackEntryAsState()

@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.example.istima.views.FeedPage
 import com.example.istima.views.maps.MapFeed
 import com.example.istima.views.NewReport
+import com.example.istima.views.ProfilePage
 
 @Composable
 fun BottomNavGraph(
@@ -24,6 +25,9 @@ fun BottomNavGraph(
         }
         composable(route = BottomBarScreen.Map.route) {
             MapFeed(navController)
+        }
+        composable(route = BottomBarScreen.Profile.route) {
+            ProfilePage()
         }
     }
 }

@@ -15,6 +15,26 @@ class SharedPreferencesService(
 
     }
 
+    fun getUserName(): String? {
+        return sharedPreferences.getString(Global.sharedPreferencesUserName, null)
+    }
+
+    fun getUserId(): String? {
+        return sharedPreferences.getString(Global.sharedPreferencesUserId, null)
+    }
+
+    fun getUserEmail(): String? {
+        return sharedPreferences.getString(Global.sharedPreferencesUserEmail, null)
+    }
+
+    fun deleteEverything() {
+        editor.clear()
+        editor.apply()
+    }
+
+//    fun countMyReports(): Int {
+//
+//    }
     /**
      * add
      */

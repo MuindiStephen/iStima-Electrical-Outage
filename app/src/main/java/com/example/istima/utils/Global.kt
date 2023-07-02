@@ -1,6 +1,7 @@
 package com.example.istima.utils
 
 import android.app.Application
+import androidx.navigation.NavHostController
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 
 class Global : Application() {
@@ -27,6 +28,8 @@ class Global : Application() {
         var coordinatesList = ArrayList<Pair<Double, Double>>()
 
         var reports = ArrayList<String>()
+
+//        lateinit var mainNavigator: NavHostController
 
     }
 }

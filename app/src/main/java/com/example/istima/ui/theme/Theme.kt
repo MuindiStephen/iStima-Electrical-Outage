@@ -19,7 +19,9 @@ import androidx.core.view.WindowCompat
 private val DarkColorScheme = darkColorScheme(
     primary = KplcDarkGreen,
     secondary = KplcYellow,
-    tertiary = Pink80
+    tertiary = Pink80,
+    onPrimary = Color.Black,
+    background = Color(0xFFFFFBFE),
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -27,6 +29,7 @@ private val LightColorScheme = lightColorScheme(
     secondary = KplcYellow,
     tertiary = Pink40,
     onPrimary = Color.White,
+    background = Color(0xFFFFFBFE),
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
