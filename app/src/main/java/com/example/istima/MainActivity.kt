@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -47,43 +48,38 @@ class MainActivity : ComponentActivity() {
     private var locationPermissionGranted = mutableStateOf(false)
 
     lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    lateinit var sharedPreferences: SharedPreferences
+
+    lateinit var editor: SharedPreferences.Editor
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         FirebaseApp.initializeApp(this)
 
-        val sharedPreferences: SharedPreferences =
-            getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
-        val isFirstLaunch = sharedPreferences.getBoolean("isFirstLaunch", true)
-        val editor = sharedPreferences.edit()
-
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser
 
-        editor.putString(Global.sharedPreferencesUserName, user!!.displayName)
-        editor.putString(Global.sharedPreferencesUserId, user.uid)
-        editor.apply()
+        sharedPreferences = getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
+        editor = sharedPreferences.edit()
 
-        val firebaseFirestoreService = FirebaseFirestoreService()
+        if(user != null) {
+            editor.putString(Global.sharedPreferencesUserId, user.uid)
+            editor.apply()
+        }
 
-        firebaseFirestoreService.getAllReports()
+        val firebaseFirestoreService = FirebaseFirestoreService(this)
 
-//        if (isFirstLaunch) {
+        firebaseFirestoreService.setAllReports()
+
         var startPage = "splash"
-//        editor.putBoolean("isFirstLaunch", false)
-//        editor.apply()
-//        } else {
-//            if (sharedPrefs.getString("userEmail", "null") == "null") {
-//                startPage = "login"
-//            } else {
-//                Log.d("ABC", "MAIN TO LOAD")
-//                startPage = "main"
-//            }
-//        }
-
-        sharedPreferences.getString("userEmail", "null")?.let { Log.d("ABC", it) }
         getLocationPermission()
+
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        getCurrentLocation()
 
         setContent {
             IStimaTheme {
@@ -91,10 +87,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    LoginPage()
-//                    FeedPage()
-//                    RegisterPage()
-
                     val navController = rememberNavController()
                     NavigationAppHost(
                         navController = navController,
@@ -105,19 +97,26 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-//    fun startLocationUpdates() {
-//        // Get the last known location
-//        fusedLocationClient.lastLocation
-//            .addOnSuccessListener { location: Location? ->
-//                // Use the location
-//                location?.let {
-//                    val latitude = location.latitude
-//                    val longitude = location.longitude
-//                    // Do something with latitude and longitude values
-//                    Log.d("ABC", "Longitude: $longitude, latitude: $latitude")
-//                }
-//            }
-//    }
+    private fun getCurrentLocation() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        val latitude = location.latitude
+                        val longitude = location.longitude
+                        editor.putString(Global.sharedPreferencesLatitude, latitude.toString())
+                        editor.putString(Global.sharedPreferencesLongitude, longitude.toString())
+                        editor.apply()
+
+                        sharedPreferences.getString(Global.sharedPreferencesLatitude, "0")
+                            ?.let { it1 -> Log.d("ABC", it1) }
+                    }
+                }
+        } else {
+            // Permission not granted, handle accordingly
+        }
+    }
 
     fun getLocationPermission() {
         if (ContextCompat.checkSelfPermission(
@@ -160,13 +159,5 @@ fun NavigationAppHost(navController: NavHostController, startDestination: String
         composable(Routes.FeedPage.route) { FeedPage(navController) }
         composable(Routes.NewReport.route) { NewReport(navController) }
         composable(Routes.SplashScreen.route) { SplashScreen(navController) }
-//        composable(Routes.ChatPage.route) { navBackStackEntry ->
-//            val macAddress = navBackStackEntry.arguments?.getString("macAddress")
-//            if (macAddress == null) {
-//                Toast.makeText(ctx, "Address not provided", Toast.LENGTH_SHORT).show()
-//            } else {
-//                ChatPage(navController = navController, macAddress = macAddress)
-//            }
-//        }
     }
 }

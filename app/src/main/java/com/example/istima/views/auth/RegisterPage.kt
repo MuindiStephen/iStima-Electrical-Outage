@@ -79,7 +79,7 @@ fun RegisterPage(navController: NavHostController) {
     val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
 
-    var firebaseFirestoreService = FirebaseFirestoreService()
+    var firebaseFirestoreService = FirebaseFirestoreService(context)
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -176,11 +176,12 @@ fun RegisterPage(navController: NavHostController) {
                 if(status == Global.SuccessStatus) {
                     auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(context as Activity) {
                         if (it.isSuccessful) {
+                            var user = auth.currentUser
                             Toast.makeText(context, "Successfully Singed Up", Toast.LENGTH_SHORT).show()
                             editor.putString("userEmail", email)
                             editor.putString("userName", "$firstName $lastName")
                             editor.apply()
-                            firebaseFirestoreService.addUser(userName = "$firstName $lastName", email = email)
+                            firebaseFirestoreService.addUser(userName = "$firstName $lastName", email = email, userId = user!!.uid)
                             navController.navigate("main")
                         } else {
                             Toast.makeText(context, "Sing Up Failed!", Toast.LENGTH_SHORT).show()

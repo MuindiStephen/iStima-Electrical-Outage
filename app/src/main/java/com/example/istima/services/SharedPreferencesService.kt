@@ -11,6 +11,10 @@ class SharedPreferencesService(
 
     val editor = sharedPreferences.edit()
 
+    fun addUserDetailsAfterSignUp() {
+
+    }
+
     /**
      * add
      */

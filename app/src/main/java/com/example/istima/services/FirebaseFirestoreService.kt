@@ -1,29 +1,41 @@
 package com.example.istima.services
 
+import android.content.Context
 import android.util.Log
 import com.example.istima.utils.Global
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class FirebaseFirestoreService {
+class FirebaseFirestoreService(
+    private var context: Context
+) {
 
     private val db = Firebase.firestore
     private val TAG = "ABC"
 
+    private lateinit var theUserName: String
+
     private var allReports = ArrayList<String>()
+
+    val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+
 
     fun postReport(
         time: String, date: String,
         latitude: Double, longitude: Double,
-        userId: String, userName: String
+        userId: String, userName: String,
+        description: String
     ) {
+        Log.d("ABC", "username: $userName")
         val post = hashMapOf(
-            "userName" to userName,
             "userID" to userId,
             "latitude" to latitude,
             "longitude" to longitude,
             "time" to time,
-            "date" to date
+            "date" to date,
+            "userName" to userName,
+            "description" to description
         )
 
         db.collection("reports")
@@ -36,34 +48,36 @@ class FirebaseFirestoreService {
             }
     }
 
-    fun addUser(userName: String, email: String) {
+    fun addUser(userName: String, email: String, userId: String) {
         val user = hashMapOf(
             "userName" to userName,
-            "email" to email
+            "email" to email,
+            "uid" to userId
         )
 
         db.collection("users")
             .add(user)
     }
 
-    fun getUserName(userId: String): String {
-        var userName = ""
+    fun getUserName(userId: String) {
+        var userName: String
         db.collection("users")
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    if (document.data["userID"] == userId) {
+                    if (document.data["uid"] == userId) {
                         userName = document.data["userName"].toString()
+                        editor.putString(Global.sharedPreferencesUserName, userName)
+                        editor.apply()
                     }
                 }
             }
             .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents.", exception)
+                Log.w(TAG, "Error getting Username", exception)
             }
-        return userName
     }
 
-    fun getAllReports(): List<String> {
+    fun setAllReports(): List<String> {
         db.collection("reports")
             .get()
             .addOnSuccessListener { result ->
@@ -78,7 +92,6 @@ class FirebaseFirestoreService {
                     report = report.dropLast(1)
                     report += "}"
                     allReports.add(report)
-//                    parseToJson(document.data.toString()).let { allReports.add(it) }
                 }
                 Log.d("ABC", allReports.toString())
                 Global.reports = allReports

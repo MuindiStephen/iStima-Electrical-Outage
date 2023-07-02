@@ -19,6 +19,10 @@ class Global : Application() {
         var sharedPreferencesName: String = "istima_preferences"
         var sharedPreferencesUserName = "userName"
         var sharedPreferencesUserId = "userId"
+        var sharedPreferencesUserEmail = "userEmail"
+
+        var sharedPreferencesLatitude = "latitude"
+        var sharedPreferencesLongitude = "longitude"
 
         var reports = ArrayList<String>()
 

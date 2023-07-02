@@ -6,8 +6,8 @@ import com.google.firebase.auth.FirebaseAuth
 
 class AuthService(private var context: Context) {
 
-    private lateinit var mAuth: FirebaseAuth
-    private var firebaseFirestoreService = FirebaseFirestoreService()
+    private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var firebaseFirestoreService = FirebaseFirestoreService(context)
 
     fun validateCredentials(newUser: Boolean = false, email: String, password: String, confirmPassword: String = ""): String {
         if (email.isBlank() || password.isBlank()) {
@@ -24,7 +24,6 @@ class AuthService(private var context: Context) {
     }
 
     fun signIn(email: String, password: String): String {
-        mAuth = FirebaseAuth.getInstance()
         mAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -32,7 +31,7 @@ class AuthService(private var context: Context) {
                     val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
                     val editor = sharedPreferences.edit()
                     editor.putString(Global.sharedPreferencesUserId, user?.uid)
-                    editor.putString(Global.sharedPreferencesUserName, firebaseFirestoreService.getUserName(user?.uid!!))
+//                    editor.putString(Global.sharedPreferencesUserName, firebaseFirestoreService.getUserName(user?.uid!!))
                     editor.apply()
                 } else {
                     return@addOnCompleteListener
@@ -50,7 +49,7 @@ class AuthService(private var context: Context) {
                     val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
                     val editor = sharedPreferences.edit()
                     editor.putString(Global.sharedPreferencesUserId, user?.uid)
-                    editor.putString(Global.sharedPreferencesUserName, firebaseFirestoreService.getUserName(user?.uid!!))
+//                    editor.putString(Global.sharedPreferencesUserName, firebaseFirestoreService.getUserName(user?.uid!!))
                     editor.apply()
                 } else {
                     return@addOnCompleteListener

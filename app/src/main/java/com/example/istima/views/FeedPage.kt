@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -43,6 +44,7 @@ import com.example.istima.ui.theme.LightRed
 import com.example.istima.ui.theme.WhiteSmoke
 import com.example.istima.utils.Global
 import com.example.istima.views.auth.pagePadding
+import com.google.maps.android.compose.GoogleMap
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -56,7 +58,7 @@ fun FeedPage(navController: NavController) {
 
     val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
 
-    val firebaseFirestoreService = FirebaseFirestoreService()
+    val firebaseFirestoreService = FirebaseFirestoreService(context)
 
     var email by remember { mutableStateOf("") }
     var reports by remember{ mutableStateOf(Global.reports) }
@@ -88,9 +90,9 @@ fun FeedPage(navController: NavController) {
                 .background(color = KplcDarkGreen)
                 .clip(shape = RoundedCornerShape(cornerShape))
         ) {
-//            GoogleMap(
-//                modifier = Modifier.fillMaxSize()
-//            )
+            GoogleMap(
+                modifier = Modifier.fillMaxSize()
+            )
         }
         Spacer(modifier = Modifier.height(pagePadding / 2))
 //        Text("${reports.size}")
@@ -103,14 +105,14 @@ fun FeedPage(navController: NavController) {
                 val jsonObject = JSONObject(report)
 
                 val name = jsonObject.getString("userName")
-                val uid = jsonObject.getString("userId")
+                val uid = jsonObject.getString("userID")
                 val date = jsonObject.getString("date")
                 val time = jsonObject.getString("time")
                 val latitude = jsonObject.getString("latitude")
                 val longitude = jsonObject.getString("longitude")
 
-//                    PostCard(name = name, date = date, time = time, )
-                Text("${reports.size}")
+                PostCard(name = name, date = date, time = time, )
+//                Text("${reports.size}")
 //                }
             }
         }

@@ -3,6 +3,7 @@ package com.example.istima.views
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -72,7 +73,7 @@ fun NewReport(navController: NavHostController) {
     val fusedLocationProviderClient =
         remember { LocationServices.getFusedLocationProviderClient(mContext) }
 
-    var firebaseFirestoreService = FirebaseFirestoreService()
+    var firebaseFirestoreService = FirebaseFirestoreService(mContext)
 
     var description by remember {
         mutableStateOf("")
@@ -114,6 +115,8 @@ fun NewReport(navController: NavHostController) {
 
     val userId = sharedPreferences.getString(Global.sharedPreferencesUserId, "NULL")
     val userName = sharedPreferences.getString(Global.sharedPreferencesUserName, "NULL")
+    val latitude = sharedPreferences.getString(Global.sharedPreferencesLatitude, "0.0")
+    val longitude = sharedPreferences.getString(Global.sharedPreferencesLongitude, "0.0")
 
     Column(
         modifier = Modifier
@@ -149,7 +152,9 @@ fun NewReport(navController: NavHostController) {
             modifier = Modifier
                 .height(elementHeight)
                 .fillMaxWidth(),
-            onValueChange = {  },
+            onValueChange = {newText: String ->
+                description = newText
+            },
             textStyle = TextStyle(color = Color.DarkGray),
             shape = RoundedCornerShape(cornerShape),
             placeholder = { Text(text = "Describe the situation (optional)") }
@@ -175,7 +180,9 @@ fun NewReport(navController: NavHostController) {
                         singleLine = true,
                         modifier = Modifier
                             .height(elementHeight),
-                        onValueChange = { },
+                        onValueChange = { newText: String ->
+                            mDate.value = newText
+                        },
                         textStyle = TextStyle(color = Color.DarkGray),
                         shape = RoundedCornerShape(cornerShape),
                         trailingIcon = {
@@ -213,7 +220,9 @@ fun NewReport(navController: NavHostController) {
                             .clickable(onClick = {
                                 mTimePickerDialog.show()
                             }),
-                        onValueChange = { },
+                        onValueChange = { newText: String ->
+                                        mTime.value = newText
+                        },
                         textStyle = TextStyle(color = Color.DarkGray),
                         shape = RoundedCornerShape(cornerShape),
                         trailingIcon = {
@@ -294,13 +303,18 @@ fun NewReport(navController: NavHostController) {
             Spacer(modifier = Modifier.width(pagePadding / 4))
             Button(
                 onClick = {
+                    Log.d("ABC", "user1: $longitude")
                     if (userId != null) {
                         if (userName != null) {
                             firebaseFirestoreService.postReport(
                                 time = mTime.value, date = mDate.value,
-                                latitude = 0.0, longitude = 0.0,
-                                userId = userId, userName = userName
+                                latitude = latitude!!.toDouble(),
+                                longitude = longitude!!.toDouble(),
+                                userId = userId, userName = userName,
+                                description = description
                             )
+
+//                            navController.navigate("main")
                         }
                     }
                 },

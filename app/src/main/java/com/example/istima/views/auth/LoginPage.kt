@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.istima.R
 import com.example.istima.services.AuthService
+import com.example.istima.services.FirebaseFirestoreService
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.utils.Global
 import com.google.firebase.auth.ktx.auth
@@ -73,6 +74,8 @@ fun LoginPage(navController: NavHostController) {
 
     val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
+
+    val firebaseFirestoreService = FirebaseFirestoreService(context)
     Column(
         modifier = Modifier
             .padding(pagePadding)
@@ -130,8 +133,11 @@ fun LoginPage(navController: NavHostController) {
                 if(status == Global.SuccessStatus) {
                     auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(context as Activity) {
                         if (it.isSuccessful) {
+                            var user = auth.currentUser
                             Toast.makeText(context, "Successfully Signed In", Toast.LENGTH_SHORT).show()
-                            editor.putString("userEmail", email)
+                            editor.putString(Global.sharedPreferencesUserId, user!!.uid)
+                            editor.putString(Global.sharedPreferencesUserEmail, email)
+                            firebaseFirestoreService.getUserName(user!!.uid)
                             editor.apply()
                             sharedPreferences.getString("userEmail", "null")
                                 ?.let { it1 -> Log.d("ABC", it1) }
