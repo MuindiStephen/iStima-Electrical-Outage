@@ -43,7 +43,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.istima.R
 import com.example.istima.services.AuthService
+import com.example.istima.services.FirebaseFirestoreService
 import com.example.istima.ui.theme.KplcDarkGreen
+import com.example.istima.utils.Global
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -61,7 +63,7 @@ fun RegisterPage(navController: NavHostController) {
     val pagePadding = 20.dp
     val elementHeight = 60.dp
 
-    var firstname by remember { mutableStateOf("") }
+    var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
@@ -73,6 +75,11 @@ fun RegisterPage(navController: NavHostController) {
     val auth = Firebase.auth
     val firebaseAuthHelper = FirebaseAuthHelper(context, navController)
     val authService = AuthService(context)
+
+    val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+
+    var firebaseFirestoreService = FirebaseFirestoreService()
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -95,13 +102,13 @@ fun RegisterPage(navController: NavHostController) {
         }
         Row {
             OutlinedTextField(
-                value = firstname,
+                value = firstName,
                 singleLine = true,
                 modifier = Modifier
                     .height(elementHeight)
                     .fillMaxWidth()
                     .weight(1f),
-                onValueChange = { newText: String -> firstname = newText },
+                onValueChange = { newText: String -> firstName = newText },
                 textStyle = TextStyle(color = Color.DarkGray),
                 placeholder = { Text("First Name") },
                 shape = RoundedCornerShape(cornerShape)
@@ -159,16 +166,21 @@ fun RegisterPage(navController: NavHostController) {
         Spacer(Modifier.height(pagePadding))
         Button(
             onClick = {
+                error = ""
                 val status = authService.validateCredentials(
                     newUser = true, email = email,
                     password = password,
                     confirmPassword = confirmPassword
                 )
 
-                if(status == "") {
+                if(status == Global.SuccessStatus) {
                     auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(context as Activity) {
                         if (it.isSuccessful) {
                             Toast.makeText(context, "Successfully Singed Up", Toast.LENGTH_SHORT).show()
+                            editor.putString("userEmail", email)
+                            editor.putString("userName", "$firstName $lastName")
+                            editor.apply()
+                            firebaseFirestoreService.addUser(userName = "$firstName $lastName", email = email)
                             navController.navigate("main")
                         } else {
                             Toast.makeText(context, "Sing Up Failed!", Toast.LENGTH_SHORT).show()

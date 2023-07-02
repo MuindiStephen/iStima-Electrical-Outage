@@ -1,26 +1,30 @@
 package com.example.istima.views
 
+import android.content.Context
+import android.os.Handler
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -33,11 +37,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.istima.R
+import com.example.istima.services.FirebaseFirestoreService
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.ui.theme.LightRed
 import com.example.istima.ui.theme.WhiteSmoke
+import com.example.istima.utils.Global
 import com.example.istima.views.auth.pagePadding
-import com.google.maps.android.compose.GoogleMap
+import org.json.JSONArray
+import org.json.JSONObject
 
 @Composable
 fun FeedPage(navController: NavController) {
@@ -45,59 +52,30 @@ fun FeedPage(navController: NavController) {
     val pagePadding = 20.dp
     val elementHeight = 60.dp
 
+    val context = LocalContext.current
+
+    val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
+
+    val firebaseFirestoreService = FirebaseFirestoreService()
+
+    var email by remember { mutableStateOf("") }
+    var reports by remember{ mutableStateOf(Global.reports) }
+//    Log.d("ABC", "reports : ${reports.size}")
+
+//    Handler().postDelayed({
+
+//        Log.d("ABC", "GlobalReports = ${Global.reports}")
+//        reports = Global.reports
+//        Log.d("ABC", "reports : ${reports.size}")
+//    }, 3000)
+
     Column(
         modifier = Modifier
-            .verticalScroll(rememberScrollState())
+            .fillMaxHeight()
+//            .verticalScroll(rememberScrollState())
             .background(LightRed)
             .padding(20.dp)
     ) {
-//        Text(
-//            "",
-//            fontWeight = FontWeight.Bold
-//        )
-//        Spacer(modifier = Modifier.height(pagePadding / 2))
-//        Row {
-//            Box(
-//                Modifier
-//                    .clip(RoundedCornerShape(7.dp))
-//                    .background(Color(0x5D058C54))
-//                    .padding(5.dp)
-//            ) {
-//                Text(
-//                    "Today",
-//                    color = KplcDarkGreen,
-//                    fontWeight = FontWeight.Bold
-//                )
-//            }
-//            Spacer(modifier = Modifier.width(pagePadding / 4))
-//            Box(
-//                Modifier
-//                    .clip(RoundedCornerShape(7.dp))
-//                    .background(Color.LightGray)
-//                    .padding(5.dp)
-//            ) {
-//                Text(
-//                    "Tomorrow",
-//                    color = Color.DarkGray,
-//                    fontWeight = FontWeight.Bold
-//                )
-//            }
-//        }
-//        Spacer(modifier = Modifier.height(pagePadding/2))
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .background(WhiteSmoke)
-//                .padding(10.dp)
-//        ) {
-//            PlannedOutageItem()
-//            PlannedOutageItem()
-//            PlannedOutageItem()
-//            PlannedOutageItem()
-//            PlannedOutageItem()
-//            PlannedOutageItem()
-//        }
-//        Spacer(modifier = Modifier.height(pagePadding))
         Text(
             "Feed",
             fontWeight = FontWeight.Bold
@@ -115,13 +93,32 @@ fun FeedPage(navController: NavController) {
 //            )
         }
         Spacer(modifier = Modifier.height(pagePadding / 2))
-        PostCard()
-        PostCard()
+//        Text("${reports.size}")
+        LazyColumn(
+            state = rememberLazyListState()
+        ) {
+            items(reports) { report ->
+
+//                for (i in 0 until jsonArray.length()) {
+                val jsonObject = JSONObject(report)
+
+                val name = jsonObject.getString("userName")
+                val uid = jsonObject.getString("userId")
+                val date = jsonObject.getString("date")
+                val time = jsonObject.getString("time")
+                val latitude = jsonObject.getString("latitude")
+                val longitude = jsonObject.getString("longitude")
+
+//                    PostCard(name = name, date = date, time = time, )
+                Text("${reports.size}")
+//                }
+            }
+        }
     }
 }
 
 @Composable
-fun PostCard() {
+fun PostCard(name: String, date: String, time: String) {
 
     val locationIcon = painterResource(id = R.mipmap.location_icon)
 
@@ -135,13 +132,13 @@ fun PostCard() {
     ) {
         Column {
             Text(
-                "Tabitha Wamaitha",
+                name,
                 fontWeight = FontWeight.Bold,
                 color = Color.Gray
             )
             Row {
                 Text(
-                    "3 hours ago",
+                    "$date  · $time",
                     fontSize = 12.sp,
                     color = Color.DarkGray
                 )
@@ -176,25 +173,6 @@ fun PostCard() {
         }
     }
 }
-
-//@Composable
-//fun PlannedOutageItem() {
-//    Box {
-//        Row {
-//            Text(
-//                text = "- Kibabii Area, Bungoma "
-//            )
-//            Text(
-//                " · ",
-//                fontSize = 16.sp,
-//                color = Color.DarkGray
-//            )
-//            Text(
-//                text = " 5pm - 7pm "
-//            )
-//        }
-//    }
-//}
 
 @Preview(showSystemUi = true)
 @Composable

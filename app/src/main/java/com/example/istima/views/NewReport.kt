@@ -2,6 +2,7 @@ package com.example.istima.views
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.widget.DatePicker
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -11,22 +12,24 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,9 +49,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.istima.R
+import com.example.istima.services.FirebaseFirestoreService
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.ui.theme.KplcLightGreen
 import com.example.istima.ui.theme.LightRed
+import com.example.istima.utils.Global
 import com.example.istima.views.auth.cornerShape
 import com.example.istima.views.auth.elementHeight
 import com.example.istima.views.auth.pagePadding
@@ -62,8 +67,12 @@ fun NewReport(navController: NavHostController) {
     val sendIcon: Painter = painterResource(id = R.mipmap.send_icon)
     val mContext = LocalContext.current
 
+    val useCurrentLocation = remember { mutableStateOf(true) }
+
     val fusedLocationProviderClient =
         remember { LocationServices.getFusedLocationProviderClient(mContext) }
+
+    var firebaseFirestoreService = FirebaseFirestoreService()
 
     var description by remember {
         mutableStateOf("")
@@ -101,11 +110,18 @@ fun NewReport(navController: NavHostController) {
         }, mHour, mMinute, false
     )
 
+    val sharedPreferences = mContext.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
+
+    val userId = sharedPreferences.getString(Global.sharedPreferencesUserId, "NULL")
+    val userName = sharedPreferences.getString(Global.sharedPreferencesUserName, "NULL")
+
     Column(
         modifier = Modifier
             .background(LightRed)
             .padding(pagePadding)
-            .fillMaxWidth(),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = elementHeight),
 //        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(elementHeight),)
@@ -217,6 +233,44 @@ fun NewReport(navController: NavHostController) {
                 }
             }
         }
+        Spacer(modifier = Modifier.height(pagePadding),)
+        Row(
+//            modifier = Modifier
+//                .align(HorizontalAlignment.Start)
+        ) {
+            Checkbox(
+                checked = useCurrentLocation.value,
+                onCheckedChange = { useCurrentLocation.value = it }
+            )
+            Text (
+                "Use current location",
+                modifier = Modifier
+                    .clickable {
+                        useCurrentLocation.value = !useCurrentLocation.value
+                    }
+            )
+        }
+        if (!useCurrentLocation.value) {
+            Spacer(modifier = Modifier.height(pagePadding),)
+            Box {
+                Text(
+                    "Enter the location",
+                    textAlign = TextAlign.Start
+                )
+            }
+            Spacer(modifier = Modifier.height(pagePadding / 4),)
+            OutlinedTextField(
+                value = description,
+                singleLine = true,
+                modifier = Modifier
+                    .height(elementHeight)
+                    .fillMaxWidth(),
+                onValueChange = {  },
+                textStyle = TextStyle(color = Color.DarkGray),
+                shape = RoundedCornerShape(cornerShape),
+                placeholder = { Text(text = "City, Street/Village") }
+            )
+        }
         Spacer(modifier = Modifier.height(elementHeight),)
         Row(
             modifier = Modifier
@@ -239,7 +293,17 @@ fun NewReport(navController: NavHostController) {
             }
             Spacer(modifier = Modifier.width(pagePadding / 4))
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    if (userId != null) {
+                        if (userName != null) {
+                            firebaseFirestoreService.postReport(
+                                time = mTime.value, date = mDate.value,
+                                latitude = 0.0, longitude = 0.0,
+                                userId = userId, userName = userName
+                            )
+                        }
+                    }
+                },
                 shape = RoundedCornerShape(cornerShape),
                 modifier = Modifier
                     .weight(2f)
