@@ -33,6 +33,9 @@ fun MapFeed(navController: NavHostController) {
 
     var coordinates by remember { mutableStateOf(Global.coordinatesList) }
 
+    val myLatitude = 0.6184071
+    val myLongitude = 34.5242516
+
     GoogleMap(
         cameraPositionState = cameraPositionState,
         onMapLoaded = {
@@ -40,7 +43,11 @@ fun MapFeed(navController: NavHostController) {
         },
 //        modifier = Modifier.matchParentSize()
     ) {
-
+        Marker(
+            state = rememberMarkerState(position = LatLng(myLatitude, myLongitude)),
+            title = "Marker1",
+            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+        )
         coordinates.forEach { coordinate ->
             val latitude = coordinate.first
             val longitude = coordinate.second

@@ -68,6 +68,11 @@ fun FeedPage(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var reports by remember{ mutableStateOf(Global.reports) }
 
+    val myLatitude = 0.6184071
+    val myLongitude = 34.5242516
+
+    var coordinates by remember { mutableStateOf(Global.coordinatesList) }
+
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -92,11 +97,22 @@ fun FeedPage(navController: NavController) {
                     navController.navigate("map")
                 }
             ) {
+
                 Marker(
-                    state = rememberMarkerState(position = LatLng(44.811058, 20.4617586)),
+                    state = rememberMarkerState(position = LatLng(myLatitude, myLongitude)),
                     title = "Marker1",
                     icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
                 )
+                coordinates.forEach { coordinate ->
+                    val latitude = coordinate.first
+                    val longitude = coordinate.second
+
+                    Marker(
+                        state = rememberMarkerState(position = LatLng(latitude, longitude)),
+                        title = "Marker1",
+                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(pagePadding / 2))
