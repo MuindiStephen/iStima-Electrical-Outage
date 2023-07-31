@@ -1,8 +1,6 @@
 package com.example.istima.views
 
 import android.content.Context
-import android.os.Handler
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,7 +48,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberMarkerState
-import org.json.JSONArray
 import org.json.JSONObject
 
 @Composable
@@ -153,7 +150,6 @@ fun PostCard(
     val locationIcon = painterResource(id = R.mipmap.location_icon)
 
     var mapService = MapService()
-
     Box(
         modifier = Modifier
 //            .clip(RoundedCornerShape(5.dp))
@@ -188,8 +184,9 @@ fun PostCard(
                         .size(13.dp)
                 )
                 Text(
-//                    mapService.getNameFromCoordinates(context = context, lat = latitude, long = longitude),
-                    "$latitude, $longitude",
+                    //mapService.getNameFromCoordinates(context = context, lat = latitude, long = longitude),
+                    // "${mapService.getNameFromCoordinates(context,latitude,longitude)}",
+                    "$latitude $longitude",
                     fontSize = 12.sp,
                     color = Color.DarkGray
                 )

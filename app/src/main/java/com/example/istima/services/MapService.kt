@@ -15,7 +15,7 @@ class MapService {
         val geoCoder = Geocoder(context, Locale.getDefault())
         val address = geoCoder.getFromLocation(lat,long,1)
 
-        Log.i("ABC", "address: $address")
+        Log.i("MapService", "address: $address")
 
         cityName = address?.get(0)!!.adminArea
         if (cityName == null){

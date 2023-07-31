@@ -137,13 +137,13 @@ fun LoginPage(navController: NavHostController) {
                             Toast.makeText(context, "Successfully Signed In", Toast.LENGTH_SHORT).show()
                             editor.putString(Global.sharedPreferencesUserId, user!!.uid)
                             editor.putString(Global.sharedPreferencesUserEmail, email)
-                            firebaseFirestoreService.getUserName(user!!.uid)
+                            firebaseFirestoreService.getUserName(user.uid)
                             editor.apply()
                             sharedPreferences.getString("userEmail", "null")
                                 ?.let { it1 -> Log.d("ABC", it1) }
                             navController.navigate("main")
                         } else {
-                            Toast.makeText(context, "Sing In Failed!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Sign In Failed!", Toast.LENGTH_SHORT).show()
                             error = "Sign In Failed!. Please try again"
                         }
                     }

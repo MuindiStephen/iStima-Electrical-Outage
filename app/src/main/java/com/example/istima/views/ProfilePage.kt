@@ -32,15 +32,17 @@ import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.istima.R
 import com.example.istima.services.AuthService
 import com.example.istima.services.SharedPreferencesService
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.ui.theme.Red
+import com.example.istima.utils.Routes
 import com.example.istima.views.auth.pagePadding
 
 @Composable
-fun ProfilePage() {
+fun ProfilePage(navController: NavHostController) {
     val profilePicSize = 200.dp
 
     var imageBitmap: Painter = painterResource(id = R.drawable.person_icon)
@@ -108,6 +110,12 @@ fun ProfilePage() {
 //                activityManager?.clearApplicationUserData()
 //                val processId =
 //                Process.killProcess(processId)
+
+                /**
+                 * Steve MD implementation
+                 */
+                navController.navigate("login")
+
             },
             modifier = Modifier
                 .padding(top = 16.dp),
@@ -124,5 +132,7 @@ fun ProfilePage() {
 @Preview(showSystemUi = true)
 @Composable
 fun ProfilePagePreview() {
-    ProfilePage()
+    var context  = LocalContext.current
+    var navController = NavHostController(context)
+    ProfilePage(navController)
 }
