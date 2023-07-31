@@ -23,16 +23,16 @@ class FirebaseAuthHelper(private val context: Context, private var navController
     ComponentActivity() {
     private val constants: Constants = Constants()
 
-    private var mAuth: FirebaseAuth
+    private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
     private var googleSignInClient: GoogleSignInClient
-    private var gso: GoogleSignInOptions
+
+    private var gso: GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestIdToken(constants.firebaseClientId)
+        .requestEmail()
+        .build()
 
     init {
-        mAuth = FirebaseAuth.getInstance()
-        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(constants.firebaseClientId)
-            .requestEmail()
-            .build()
 
         googleSignInClient = GoogleSignIn.getClient(context, gso)
     }

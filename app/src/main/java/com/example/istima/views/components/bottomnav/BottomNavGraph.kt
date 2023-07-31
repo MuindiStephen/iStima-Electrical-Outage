@@ -4,10 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.istima.utils.Routes
 import com.example.istima.views.FeedPage
 import com.example.istima.views.maps.MapFeed
 import com.example.istima.views.NewReport
 import com.example.istima.views.ProfilePage
+import com.example.istima.views.auth.LoginPage
 
 @Composable
 fun BottomNavGraph(
@@ -27,7 +29,11 @@ fun BottomNavGraph(
             MapFeed(navController)
         }
         composable(route = BottomBarScreen.Profile.route) {
-            ProfilePage()
+            ProfilePage(navController)
+        }
+
+        composable("login") {
+            LoginPage(navController = navController)
         }
     }
 }

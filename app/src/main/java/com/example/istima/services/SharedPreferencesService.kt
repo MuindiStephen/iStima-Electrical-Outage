@@ -7,9 +7,9 @@ class SharedPreferencesService(
     private var context: Context
 ) {
 
-    val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
+   private val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
 
-    val editor = sharedPreferences.edit()
+    private val editor = sharedPreferences.edit()
 
     fun addUserDetailsAfterSignUp() {
 

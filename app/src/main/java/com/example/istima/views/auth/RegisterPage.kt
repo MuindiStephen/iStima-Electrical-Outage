@@ -177,15 +177,15 @@ fun RegisterPage(navController: NavHostController) {
                     auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(context as Activity) {
                         if (it.isSuccessful) {
                             var user = auth.currentUser
-                            Toast.makeText(context, "Successfully Singed Up", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Successfully Signed Up", Toast.LENGTH_SHORT).show()
                             editor.putString("userEmail", email)
                             editor.putString("userName", "$firstName $lastName")
                             editor.apply()
                             firebaseFirestoreService.addUser(userName = "$firstName $lastName", email = email, userId = user!!.uid)
                             navController.navigate("main")
                         } else {
-                            Toast.makeText(context, "Sing Up Failed!", Toast.LENGTH_SHORT).show()
-                            error = "Sing Up Failed!. Please try again"
+                            Toast.makeText(context, "Sign Up Failed!", Toast.LENGTH_SHORT).show()
+                            error = "Sign Up Failed!. Please try again"
                         }
                     }
                 } else {

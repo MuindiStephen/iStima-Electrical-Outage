@@ -150,7 +150,6 @@ fun PostCard(
     val locationIcon = painterResource(id = R.mipmap.location_icon)
 
     var mapService = MapService()
-
     Box(
         modifier = Modifier
 //            .clip(RoundedCornerShape(5.dp))
@@ -186,7 +185,8 @@ fun PostCard(
                 )
                 Text(
                     //mapService.getNameFromCoordinates(context = context, lat = latitude, long = longitude),
-                    "${mapService.getNameFromCoordinates(context,latitude,longitude)}",
+                    // "${mapService.getNameFromCoordinates(context,latitude,longitude)}",
+                    "$latitude $longitude",
                     fontSize = 12.sp,
                     color = Color.DarkGray
                 )
