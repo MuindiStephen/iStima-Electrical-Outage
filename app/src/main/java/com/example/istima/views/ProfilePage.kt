@@ -112,7 +112,7 @@ fun ProfilePage(navController: NavHostController) {
 //                Process.killProcess(processId)
 
                 /**
-                 * Steve MD implementation
+                 * Steve Muindi's implementation
                  */
                 navController.navigate("login")
 

@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -34,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -48,14 +46,12 @@ import com.example.istima.services.AuthService
 import com.example.istima.services.FirebaseFirestoreService
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.utils.Global
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.FirebaseAuth
 
 val cornerShape = 1.dp
 val pagePadding = 20.dp
 val elementHeight = 60.dp
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginPage(navController: NavHostController) {
 
@@ -69,7 +65,7 @@ fun LoginPage(navController: NavHostController) {
 
     var error by remember { mutableStateOf("") }
 
-    val auth = Firebase.auth
+    val auth: FirebaseAuth = FirebaseAuth.getInstance()
     val authService = AuthService(context = context)
 
     val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
@@ -133,7 +129,7 @@ fun LoginPage(navController: NavHostController) {
                 if(status == Global.SuccessStatus) {
                     auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(context as Activity) {
                         if (it.isSuccessful) {
-                            var user = auth.currentUser
+                            val user = auth.currentUser
                             Toast.makeText(context, "Successfully Signed In", Toast.LENGTH_SHORT).show()
                             editor.putString(Global.sharedPreferencesUserId, user!!.uid)
                             editor.putString(Global.sharedPreferencesUserEmail, email)
@@ -231,7 +227,7 @@ fun LoginPage(navController: NavHostController) {
 @Preview(showSystemUi = true)
 @Composable
 fun GreetingPreview() {
-    var ctx = LocalContext.current
-    var navController: NavHostController = NavHostController(ctx)
+    val ctx = LocalContext.current
+    val navController = NavHostController(ctx)
     LoginPage(navController)
 }

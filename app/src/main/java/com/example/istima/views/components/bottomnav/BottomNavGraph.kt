@@ -32,6 +32,10 @@ fun BottomNavGraph(
             ProfilePage(navController)
         }
 
+
+        /**
+         * Steve Muindi's implementation
+         */
         composable("login") {
             LoginPage(navController = navController)
         }

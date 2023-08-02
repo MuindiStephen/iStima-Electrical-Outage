@@ -130,8 +130,11 @@ fun FeedPage(navController: NavController) {
                 val longitude = jsonObject.getString("longitude")
 
                 PostCard(
-                    name = name, date = date, time = time,
-                    description = description, latitude = latitude.toDouble(),
+                    name = name,
+                    date = date,
+                    time = time,
+                    description = description,
+                    latitude = latitude.toDouble(),
                     longitude = longitude.toDouble())
             }
         }
