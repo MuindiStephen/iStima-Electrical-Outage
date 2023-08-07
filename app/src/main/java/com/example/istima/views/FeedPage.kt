@@ -1,6 +1,8 @@
 package com.example.istima.views
 
 import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,8 +39,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.istima.R
+import com.example.istima.model.Report
 import com.example.istima.services.FirebaseFirestoreService
-import com.example.istima.services.MapService
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.ui.theme.LightRed
 import com.example.istima.ui.theme.WhiteSmoke
@@ -46,12 +48,14 @@ import com.example.istima.utils.Global
 import com.example.istima.views.auth.pagePadding
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberMarkerState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
 
 @Composable
 fun FeedPage(navController: NavController) {
@@ -61,27 +65,58 @@ fun FeedPage(navController: NavController) {
 
     val context = LocalContext.current
 
-    val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
 
-    val firebaseFirestoreService = FirebaseFirestoreService(context)
 
-    var email by remember { mutableStateOf("") }
-
-    var reports by remember { mutableStateOf(Global.reports) }
-
+    /**
+     * Stephen Muindi Implementation
+     * @2023
+     */
+    var reportsList by remember { mutableStateOf(emptyList<Report>()) }
 
 
     LaunchedEffect(Unit) {
-        val fetchedReports = withContext(Dispatchers.IO) {
-            firebaseFirestoreService.getAllReports()
-        }
-        reports = ArrayList(fetchedReports)
+        val databaseReference = FirebaseDatabase.getInstance().getReference("reports")
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val tempList = mutableListOf<Report>()
+
+                if (snapshot.exists()) {
+                    for (i in snapshot.children) {
+                        val report: Report? = i.getValue(Report::class.java)
+                        report?.let { report ->
+                            tempList.add(report)
+                        }
+                    }
+                        reportsList = tempList
+
+                        Toast.makeText(
+                            context,
+                            "Alert! Available Reports",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                } else {
+                    reportsList = emptyList()
+                    Toast.makeText(
+                        context,
+                        "No reported KPLC issues",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("","Error occurred!")
+            }
+
+        })
     }
+
+
 
     val myLatitude = 0.6184071
     val myLongitude = 34.5242516
 
-    var coordinates by remember { mutableStateOf(Global.coordinatesList) }
+    val coordinates by remember { mutableStateOf(Global.coordinatesList) }
 
     Column(
         modifier = Modifier
@@ -127,50 +162,48 @@ fun FeedPage(navController: NavController) {
         }
         Spacer(modifier = Modifier.height(pagePadding / 2))
 
-       Text("${reports.size}")
+       Text("${reportsList.size}")
+
+        /**
+         * Stephen Muindi implementation
+         * @2023
+         */
+
 
         LazyColumn(
             state = rememberLazyListState()
         ) {
-            items(reports) { report ->
-
-                val jsonObject = JSONObject(report)
-
-                val name = jsonObject.getString("userName")
-                val description = jsonObject.getString("description")
-                val uid = jsonObject.getString("userID")
-                val date = jsonObject.getString("date")
-                val time = jsonObject.getString("time")
-                val latitude = jsonObject.getString("latitude")
-                val longitude = jsonObject.getString("longitude")
+            items(reportsList) { report ->
 
                 PostCard(
-                    name = name,
-                    date = date,
-                    time = time,
-                    description = description,
-                    latitude = latitude.toDouble(),
-                    longitude = longitude.toDouble())
+                    date = report.date,
+                    time = report.time,
+                    description = report.description,
+                    latitude = report.latitude,
+                    longitude = report.longitude
+                )
+
             }
         }
-        Spacer(modifier = Modifier.height(elementHeight).padding(elementHeight))
+        Spacer(modifier = Modifier
+            .height(elementHeight)
+            .padding(elementHeight))
     }
 }
 
 @Composable
 fun PostCard(
-    name: String, date: String,
-    time: String, description: String = "",
-    latitude: Double, longitude: Double
+    date: String,
+    time: String,
+    description: String = "",
+    latitude: Double,
+    longitude: Double
 ) {
 
-    val context = LocalContext.current
     val locationIcon = painterResource(id = R.mipmap.location_icon)
 
-    var mapService = MapService()
     Box(
         modifier = Modifier
-//            .clip(RoundedCornerShape(5.dp))
             .fillMaxWidth()
             .background(WhiteSmoke)
             .padding(top = 10.dp)
@@ -178,7 +211,7 @@ fun PostCard(
     ) {
         Column {
             Text(
-                name,
+                "",
                 fontWeight = FontWeight.Bold,
                 color = Color.Gray
             )
@@ -202,8 +235,6 @@ fun PostCard(
                         .size(13.dp)
                 )
                 Text(
-                    //mapService.getNameFromCoordinates(context = context, lat = latitude, long = longitude),
-                    // "${mapService.getNameFromCoordinates(context,latitude,longitude)}",
                     "$latitude $longitude",
                     fontSize = 12.sp,
                     color = Color.DarkGray
@@ -225,7 +256,7 @@ fun PostCard(
 @Preview(showSystemUi = true)
 @Composable
 fun FeedPagePreview() {
-    var ctx = LocalContext.current
-    var navController: NavHostController = NavHostController(ctx)
+    val ctx = LocalContext.current
+    val navController: NavHostController = NavHostController(ctx)
     FeedPage(navController)
 }
