@@ -20,6 +20,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberMarkerState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 @Composable
@@ -63,7 +66,17 @@ fun FeedPage(navController: NavController) {
     val firebaseFirestoreService = FirebaseFirestoreService(context)
 
     var email by remember { mutableStateOf("") }
-    var reports by remember{ mutableStateOf(Global.reports) }
+
+    var reports by remember { mutableStateOf(Global.reports) }
+
+
+
+    LaunchedEffect(Unit) {
+        val fetchedReports = withContext(Dispatchers.IO) {
+            firebaseFirestoreService.getAllReports()
+        }
+        reports = ArrayList(fetchedReports)
+    }
 
     val myLatitude = 0.6184071
     val myLongitude = 34.5242516
@@ -113,7 +126,9 @@ fun FeedPage(navController: NavController) {
             }
         }
         Spacer(modifier = Modifier.height(pagePadding / 2))
-//        Text("${reports.size}")
+
+       Text("${reports.size}")
+
         LazyColumn(
             state = rememberLazyListState()
         ) {

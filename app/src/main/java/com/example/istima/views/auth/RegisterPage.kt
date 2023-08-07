@@ -42,12 +42,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.istima.R
+import com.example.istima.model.NewUser
 import com.example.istima.services.AuthService
 import com.example.istima.services.FirebaseFirestoreService
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.utils.Global
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,6 +57,14 @@ import com.google.firebase.ktx.Firebase
 fun RegisterPage(navController: NavHostController) {
 
     val context: Context = LocalContext.current
+
+    /**
+     * Stephen Muindi Implementation
+     * @2023
+     */
+
+    val databaseReference = FirebaseDatabase.getInstance().getReference("users")
+    val firebaseAuth = FirebaseAuth.getInstance()
 
     val googleIcon: Painter = painterResource(id = R.mipmap.google_icon)
     val appleIcon: Painter = painterResource(id = R.mipmap.apple_icon)
@@ -66,7 +76,6 @@ fun RegisterPage(navController: NavHostController) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
@@ -166,31 +175,37 @@ fun RegisterPage(navController: NavHostController) {
         Spacer(Modifier.height(pagePadding))
         Button(
             onClick = {
-                error = ""
-                val status = authService.validateCredentials(
-                    newUser = true, email = email,
-                    password = password,
-                    confirmPassword = confirmPassword
-                )
+              if (
+                  firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() ||
+                  password.isEmpty() || confirmPassword.isEmpty()
+                  ) {
+                  Toast.makeText(context, "Empty fields", Toast.LENGTH_SHORT).show()
+                  return@Button
+              }
+                /**
+                 * Stephen Muindi Implementation
+                 * @2023
+                 */
 
-                if(status == Global.SuccessStatus) {
-                    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(context as Activity) {
-                        if (it.isSuccessful) {
-                            var user = auth.currentUser
-                            Toast.makeText(context, "Successfully Signed Up", Toast.LENGTH_SHORT).show()
-                            editor.putString("userEmail", email)
-                            editor.putString("userName", "$firstName $lastName")
-                            editor.apply()
-                            firebaseFirestoreService.addUser(userName = "$firstName $lastName", email = email, userId = user!!.uid)
-                            navController.navigate("main")
-                        } else {
-                            Toast.makeText(context, "Sign Up Failed!", Toast.LENGTH_SHORT).show()
-                            error = "Sign Up Failed!. Please try again"
-                        }
+                firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {task->
+
+                    if (task.isSuccessful) {
+                        val userId: String = firebaseAuth.currentUser?.uid ?: ""
+                        val newUser = NewUser(firstName, lastName, email, password, confirmPassword)
+                        databaseReference.child(userId).setValue(newUser)
+                        Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT).show()
+                        navController.navigate("main")
+                    } else {
+                        Toast.makeText(
+                            context,
+                            task.exception?.localizedMessage ?: "Registration failed",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                } else {
-                    error = status
+
                 }
+
+
             },
             shape = RoundedCornerShape(cornerShape),
             modifier = Modifier

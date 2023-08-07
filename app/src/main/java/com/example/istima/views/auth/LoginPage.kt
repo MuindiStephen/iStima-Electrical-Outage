@@ -1,8 +1,6 @@
 package com.example.istima.views.auth
 
-import android.app.Activity
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -65,7 +63,7 @@ fun LoginPage(navController: NavHostController) {
 
     var error by remember { mutableStateOf("") }
 
-    val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    val firebaseAuth = FirebaseAuth.getInstance()
     val authService = AuthService(context = context)
 
     val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
@@ -120,32 +118,30 @@ fun LoginPage(navController: NavHostController) {
         Spacer(modifier = Modifier.height(pagePadding))
         Button(
             onClick = {
-                error = ""
-                val status = authService.validateCredentials(
-                    email = email,
-                    password = password,
-                )
 
-                if(status == Global.SuccessStatus) {
-                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(context as Activity) {
-                        if (it.isSuccessful) {
-                            val user = auth.currentUser
-                            Toast.makeText(context, "Successfully Signed In", Toast.LENGTH_SHORT).show()
-                            editor.putString(Global.sharedPreferencesUserId, user!!.uid)
-                            editor.putString(Global.sharedPreferencesUserEmail, email)
-                            firebaseFirestoreService.getUserName(user.uid)
-                            editor.apply()
-                            sharedPreferences.getString("userEmail", "null")
-                                ?.let { it1 -> Log.d("ABC", it1) }
-                            navController.navigate("main")
-                        } else {
-                            Toast.makeText(context, "Sign In Failed!", Toast.LENGTH_SHORT).show()
-                            error = "Sign In Failed!. Please try again"
-                        }
-                    }
-                } else {
-                    error = status
+                /**
+                 * Stephen Muindi Implementation
+                 * @2023
+                 */
+
+
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(context, "Empty fields", Toast.LENGTH_SHORT).show()
+                    return@Button
                 }
+
+                firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task->
+
+                    if (task.isSuccessful) {
+                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                        navController.navigate("main")
+                    }
+                    else {
+                        Toast.makeText(context, "Sign in failed!", Toast.LENGTH_LONG).show()
+                    }
+                }
+
+
             },
             shape = RoundedCornerShape(cornerShape),
             modifier = Modifier
