@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.util.Log
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,6 +33,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.istima.R
+import com.example.istima.model.Report
 import com.example.istima.services.FirebaseFirestoreService
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.ui.theme.KplcLightGreen
@@ -59,6 +62,8 @@ import com.example.istima.views.auth.cornerShape
 import com.example.istima.views.auth.elementHeight
 import com.example.istima.views.auth.pagePadding
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import java.util.Calendar
 import java.util.Date
 import java.util.logging.Handler
@@ -71,10 +76,13 @@ fun NewReport(navController: NavHostController) {
 
     val useCurrentLocation = remember { mutableStateOf(true) }
 
+    //TODO()
     val fusedLocationProviderClient =
         remember { LocationServices.getFusedLocationProviderClient(mContext) }
 
-    var firebaseFirestoreService = FirebaseFirestoreService(mContext)
+
+
+
 
     var description by remember {
         mutableStateOf("")
@@ -114,10 +122,20 @@ fun NewReport(navController: NavHostController) {
 
     val sharedPreferences = mContext.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
 
-    val userId = sharedPreferences.getString(Global.sharedPreferencesUserId, "NULL")
+    // var userId = sharedPreferences.getString(Global.sharedPreferencesUserId, "NULL")
     val userName = sharedPreferences.getString(Global.sharedPreferencesUserName, "NULL")
-    val latitude = sharedPreferences.getString(Global.sharedPreferencesLatitude, "0.0")
-    val longitude = sharedPreferences.getString(Global.sharedPreferencesLongitude, "0.0")
+    val latitude = sharedPreferences.getString(Global.sharedPreferencesLatitude, "34.433")
+    val longitude = sharedPreferences.getString(Global.sharedPreferencesLongitude, "0.671")
+
+
+
+    /**
+     * Stephen Muindi implementation
+     * @2023
+     */
+
+    val databaseReference = FirebaseDatabase.getInstance().reference
+
 
     Column(
         modifier = Modifier
@@ -304,23 +322,21 @@ fun NewReport(navController: NavHostController) {
             Spacer(modifier = Modifier.width(pagePadding / 4))
             Button(
                 onClick = {
-                    Log.d("ABC", "user1: $longitude")
-                    if (userId != null) {
-                        if (userName != null) {
-                            firebaseFirestoreService.postReport(
-                                time = mTime.value, date = mDate.value,
-                                latitude = latitude!!.toDouble(),
-                                longitude = longitude!!.toDouble(),
-                                userId = userId, userName = userName,
-                                description = description
-                            )
+                    /**
+                     * Stephen Muindi Implementation
+                     * @2023
+                     */
+                    Log.d("$mContext", "Report: Report added.")
 
-                            android.os.Handler().postDelayed({
-                                firebaseFirestoreService.getAllReports()
-                            }, 4000)
-                            navController.navigate("feed")
-                        }
-                    }
+                    val report = Report(description,mDate.value,mTime.value,latitude!!.toDouble(),longitude!!.toDouble())
+
+                    databaseReference.child("reports").push().setValue(report)
+
+                    Toast.makeText(mContext, "KPLC Reporting successful", Toast.LENGTH_SHORT)
+                        .show()
+
+                    navController.navigate("feed")
+
                 },
                 shape = RoundedCornerShape(cornerShape),
                 modifier = Modifier
@@ -350,8 +366,8 @@ fun NewReport(navController: NavHostController) {
 @Preview(showSystemUi = true)
 @Composable
 fun GreetingPreview2() {
-    var ctx = LocalContext.current
-    var navController: NavHostController = NavHostController(ctx)
+    val ctx = LocalContext.current
+    val navController: NavHostController = NavHostController(ctx)
 
     NewReport(navController)
 }
