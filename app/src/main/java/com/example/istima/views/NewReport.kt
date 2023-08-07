@@ -6,6 +6,8 @@ import android.content.Context
 import android.util.Log
 import android.widget.DatePicker
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,6 +39,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +56,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.istima.R
 import com.example.istima.model.Report
-import com.example.istima.services.FirebaseFirestoreService
 import com.example.istima.ui.theme.KplcDarkGreen
 import com.example.istima.ui.theme.KplcLightGreen
 import com.example.istima.ui.theme.LightRed
@@ -61,28 +63,53 @@ import com.example.istima.utils.Global
 import com.example.istima.views.auth.cornerShape
 import com.example.istima.views.auth.elementHeight
 import com.example.istima.views.auth.pagePadding
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
-import java.util.logging.Handler
 
 @Composable
 fun NewReport(navController: NavHostController) {
 
     val sendIcon: Painter = painterResource(id = R.mipmap.send_icon)
+
+    /**
+     * Stephen Muindi Implementation
+     * @2023
+     */
     val mContext = LocalContext.current
 
     val useCurrentLocation = remember { mutableStateOf(true) }
 
-    //TODO()
-    val fusedLocationProviderClient =
-        remember { LocationServices.getFusedLocationProviderClient(mContext) }
+    val coroutineScope = rememberCoroutineScope()
 
+    val fusedLocationProviderClient: FusedLocationProviderClient = remember {
+        LocationServices.getFusedLocationProviderClient(mContext)
+    }
 
+    var latitude by remember {
+        mutableStateOf(0.0)
+    }
+    var longitude by remember {
+        mutableStateOf(0.0)
+    }
 
+    LaunchedEffect(Unit) {
+        fetchLocation(
+            coroutineScope,
+            fusedLocationProviderClient
+        ) { fetchedLatitude, fetchedLongitude ->
 
+            latitude = fetchedLatitude
+            longitude = fetchedLongitude
+        }
+    }
 
     var description by remember {
         mutableStateOf("")
@@ -103,29 +130,31 @@ fun NewReport(navController: NavHostController) {
 
     mCalendar.time = Date()
 
-    val mDate = remember { mutableStateOf("$mDay/${mMonth+1}/$mYear") }
+    val mDate = remember { mutableStateOf("$mDay/${mMonth + 1}/$mYear") }
     val mTime = remember { mutableStateOf("$mHour:$mMinute") }
 
     val mDatePickerDialog = DatePickerDialog(
         mContext,
         { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-            mDate.value = "$mDayOfMonth/${mMonth+1}/$mYear"
+            mDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
         }, mYear, mMonth, mDay
     )
 
     val mTimePickerDialog = TimePickerDialog(
         mContext,
-        {_, mHour : Int, mMinute: Int ->
+        { _, mHour: Int, mMinute: Int ->
             mTime.value = "$mHour:$mMinute"
         }, mHour, mMinute, false
     )
 
-    val sharedPreferences = mContext.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
+    val sharedPreferences =
+        mContext.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
 
     // var userId = sharedPreferences.getString(Global.sharedPreferencesUserId, "NULL")
-    val userName = sharedPreferences.getString(Global.sharedPreferencesUserName, "NULL")
-    val latitude = sharedPreferences.getString(Global.sharedPreferencesLatitude, "34.433")
-    val longitude = sharedPreferences.getString(Global.sharedPreferencesLongitude, "0.671")
+   // val userName = sharedPreferences.getString(Global.sharedPreferencesUserName, "NULL")
+//    val latitude = sharedPreferences.getString(Global.sharedPreferencesLatitude, "34.433")
+//    val longitude = sharedPreferences.getString(Global.sharedPreferencesLongitude, "0.671")
+
 
 
 
@@ -135,6 +164,26 @@ fun NewReport(navController: NavHostController) {
      */
 
     val databaseReference = FirebaseDatabase.getInstance().reference
+
+    // Location
+    // Location fetching variables
+    var locationPermissionGranted by remember { mutableStateOf(false) }
+
+
+
+
+    // Check for location permission
+    val requestLocationPermissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            locationPermissionGranted = isGranted
+            if (isGranted) {
+                fetchLocation(coroutineScope,fusedLocationProviderClient) { fetchedLatitude, fetchedLongitude ->
+                    latitude = fetchedLatitude
+                    longitude = fetchedLongitude
+                }
+            }
+        }
+
 
 
     Column(
@@ -146,7 +195,7 @@ fun NewReport(navController: NavHostController) {
             .padding(bottom = elementHeight),
 //        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(elementHeight),)
+        Spacer(modifier = Modifier.height(elementHeight))
         Box(
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
@@ -157,28 +206,28 @@ fun NewReport(navController: NavHostController) {
                 fontSize = 20.sp,
             )
         }
-        Spacer(modifier = Modifier.height(elementHeight),)
+        Spacer(modifier = Modifier.height(elementHeight))
         Box {
             Text(
                 "Describe the situation (optional)",
                 textAlign = TextAlign.Start
             )
         }
-        Spacer(modifier = Modifier.height(pagePadding / 4),)
+        Spacer(modifier = Modifier.height(pagePadding / 4))
         OutlinedTextField(
             value = description,
             singleLine = true,
             modifier = Modifier
                 .height(elementHeight)
                 .fillMaxWidth(),
-            onValueChange = {newText: String ->
+            onValueChange = { newText: String ->
                 description = newText
             },
             textStyle = TextStyle(color = Color.DarkGray),
             shape = RoundedCornerShape(cornerShape),
             placeholder = { Text(text = "Describe the situation (optional)") }
         )
-        Spacer(modifier = Modifier.height(pagePadding),)
+        Spacer(modifier = Modifier.height(pagePadding))
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -205,18 +254,18 @@ fun NewReport(navController: NavHostController) {
                         textStyle = TextStyle(color = Color.DarkGray),
                         shape = RoundedCornerShape(cornerShape),
                         trailingIcon = {
-                        IconButton(
-                            onClick = {
-                                mDatePickerDialog.show()
-                            },
-                        ) {
-                            Icon(
-                                Icons.Default.DateRange,
-                                contentDescription = "",
-                                tint = Color.Black
-                            )
+                            IconButton(
+                                onClick = {
+                                    mDatePickerDialog.show()
+                                },
+                            ) {
+                                Icon(
+                                    Icons.Default.DateRange,
+                                    contentDescription = "",
+                                    tint = Color.Black
+                                )
+                            }
                         }
-                    }
                     )
                 }
             }
@@ -240,7 +289,7 @@ fun NewReport(navController: NavHostController) {
                                 mTimePickerDialog.show()
                             }),
                         onValueChange = { newText: String ->
-                                        mTime.value = newText
+                            mTime.value = newText
                         },
                         textStyle = TextStyle(color = Color.DarkGray),
                         shape = RoundedCornerShape(cornerShape),
@@ -261,45 +310,53 @@ fun NewReport(navController: NavHostController) {
                 }
             }
         }
-        Spacer(modifier = Modifier.height(pagePadding),)
+        Spacer(modifier = Modifier.height(pagePadding))
         Row(
 //            modifier = Modifier
 //                .align(HorizontalAlignment.Start)
         ) {
             Checkbox(
                 checked = useCurrentLocation.value,
-                onCheckedChange = { useCurrentLocation.value = it }
+                onCheckedChange = { isChecked ->
+                    useCurrentLocation.value = isChecked
+                    if (isChecked && !locationPermissionGranted) {
+                        requestLocationPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    }
+                }
             )
-            Text (
+            Text(
                 "Use current location",
                 modifier = Modifier
                     .clickable {
                         useCurrentLocation.value = !useCurrentLocation.value
+                        if (useCurrentLocation.value && !locationPermissionGranted) {
+                            requestLocationPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                        }
                     }
             )
         }
         if (!useCurrentLocation.value) {
-            Spacer(modifier = Modifier.height(pagePadding),)
+            Spacer(modifier = Modifier.height(pagePadding))
             Box {
                 Text(
                     "Enter the location",
                     textAlign = TextAlign.Start
                 )
             }
-            Spacer(modifier = Modifier.height(pagePadding / 4),)
+            Spacer(modifier = Modifier.height(pagePadding / 4))
             OutlinedTextField(
                 value = description,
                 singleLine = true,
                 modifier = Modifier
                     .height(elementHeight)
                     .fillMaxWidth(),
-                onValueChange = {  },
+                onValueChange = { },
                 textStyle = TextStyle(color = Color.DarkGray),
                 shape = RoundedCornerShape(cornerShape),
                 placeholder = { Text(text = "City, Street/Village") }
             )
         }
-        Spacer(modifier = Modifier.height(elementHeight),)
+        Spacer(modifier = Modifier.height(elementHeight))
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -328,7 +385,25 @@ fun NewReport(navController: NavHostController) {
                      */
                     Log.d("$mContext", "Report: Report added.")
 
-                    val report = Report(description,mDate.value,mTime.value,latitude!!.toDouble(),longitude!!.toDouble())
+                    val latitudeValue = if (useCurrentLocation.value) {
+                        latitude
+                    } else {
+                        34.41
+                    }
+
+                    val longitudeValue = if (useCurrentLocation.value) {
+                        longitude
+                    } else {
+                        0.0343
+                    }
+
+                    val report = Report(
+                        description,
+                        mDate.value,
+                        mTime.value,
+                        latitudeValue,
+                        longitudeValue
+                    )
 
                     databaseReference.child("reports").push().setValue(report)
 
@@ -359,6 +434,45 @@ fun NewReport(navController: NavHostController) {
                     )
                 }
             }
+        }
+    }
+
+}
+
+
+/**
+ * Stephen Muindi Implementation
+ * @2023
+ */
+
+fun fetchLocation(
+    coroutineScope: CoroutineScope,
+    fusedLocationProviderClient: FusedLocationProviderClient,
+    onLocationFetched: (Double, Double) -> Unit
+) {
+    coroutineScope.launch {
+        try {
+            val locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(5000) // 5 seconds interval for location updates
+
+            fusedLocationProviderClient.requestLocationUpdates(
+                locationRequest,
+                object : LocationCallback() {
+                    override fun onLocationResult(p0: LocationResult) {
+                        p0.lastLocation?.let { location ->
+                            val latitude = location.latitude
+                            val longitude = location.longitude
+                            onLocationFetched(latitude, longitude)
+
+                            Log.d("NewReport","Fetched: $latitude $longitude")
+                        }
+                    }
+                },
+                null
+            )
+        } catch (e: SecurityException) {
+            Log.d("NewReport","Location: Not available")
         }
     }
 }
