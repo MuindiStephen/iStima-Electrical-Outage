@@ -85,7 +85,8 @@ fun RegisterPage(navController: NavHostController) {
     val firebaseAuthHelper = FirebaseAuthHelper(context, navController)
     val authService = AuthService(context)
 
-    val sharedPreferences = context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
+    val sharedPreferences =
+        context.getSharedPreferences(Global.sharedPreferencesName, Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
 
     var firebaseFirestoreService = FirebaseFirestoreService(context)
@@ -97,9 +98,11 @@ fun RegisterPage(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Join iStima", fontWeight = FontWeight.W400, fontSize = 23.sp)
-        Spacer(modifier = Modifier
-            .padding(pagePadding)
-            .height(pagePadding))
+        Spacer(
+            modifier = Modifier
+                .padding(pagePadding)
+                .height(pagePadding)
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -136,7 +139,7 @@ fun RegisterPage(navController: NavHostController) {
                 shape = RoundedCornerShape(cornerShape)
             )
         }
-        Spacer(Modifier.height(pagePadding/2))
+        Spacer(Modifier.height(pagePadding / 2))
         OutlinedTextField(
             value = email,
             singleLine = true,
@@ -148,7 +151,7 @@ fun RegisterPage(navController: NavHostController) {
             placeholder = { Text("Email") },
             shape = RoundedCornerShape(cornerShape)
         )
-        Spacer(Modifier.height(pagePadding/2))
+        Spacer(Modifier.height(pagePadding / 2))
         OutlinedTextField(
             value = password,
             singleLine = true,
@@ -160,7 +163,7 @@ fun RegisterPage(navController: NavHostController) {
             placeholder = { Text("Password") },
             shape = RoundedCornerShape(cornerShape)
         )
-        Spacer(Modifier.height(pagePadding/2))
+        Spacer(Modifier.height(pagePadding / 2))
         OutlinedTextField(
             value = confirmPassword,
             singleLine = true,
@@ -175,35 +178,41 @@ fun RegisterPage(navController: NavHostController) {
         Spacer(Modifier.height(pagePadding))
         Button(
             onClick = {
-              if (
-                  firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() ||
-                  password.isEmpty() || confirmPassword.isEmpty()
-                  ) {
-                  Toast.makeText(context, "Empty fields", Toast.LENGTH_SHORT).show()
-                  return@Button
-              }
+                if (
+                    firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() ||
+                    password.isEmpty() || confirmPassword.isEmpty()
+                ) {
+                    Toast.makeText(context, "Empty fields", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
                 /**
                  * Stephen Muindi Implementation
                  * @2023
                  */
 
-                firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {task->
+                firebaseAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
 
-                    if (task.isSuccessful) {
-                        val userId: String = firebaseAuth.currentUser?.uid ?: ""
-                        val newUser = NewUser(firstName, lastName, email, password, confirmPassword)
-                        databaseReference.child(userId).setValue(newUser)
-                        Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT).show()
-                        navController.navigate("login")
-                    } else {
-                        Toast.makeText(
-                            context,
-                            task.exception?.localizedMessage ?: "Registration failed",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        if (task.isSuccessful) {
+                            val userId: String = firebaseAuth.currentUser?.uid ?: ""
+                            val newUser =
+                                NewUser(firstName, lastName, email, password, confirmPassword)
+                            databaseReference.child(userId).setValue(newUser)
+                            Toast.makeText(
+                                context,
+                                "Account created successfully!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            navController.navigate("login")
+                        } else {
+                            Toast.makeText(
+                                context,
+                                task.exception?.localizedMessage ?: "Registration failed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
                     }
-
-                }
 
 
             },
@@ -219,7 +228,7 @@ fun RegisterPage(navController: NavHostController) {
         ) {
             Text("SIGN UP")
         }
-        Spacer(Modifier.height(pagePadding/2))
+        Spacer(Modifier.height(pagePadding / 2))
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -227,8 +236,8 @@ fun RegisterPage(navController: NavHostController) {
         ) {
             Button(
                 onClick = {
-                          firebaseAuthHelper.googleSignIn()
-                          },
+                    firebaseAuthHelper.googleSignIn()
+                },
                 shape = RoundedCornerShape(cornerShape),
                 modifier = Modifier
                     .weight(1f)
@@ -237,7 +246,7 @@ fun RegisterPage(navController: NavHostController) {
                     containerColor = Color.White,
                     contentColor = Color.DarkGray,
                 ),
-                border= BorderStroke(1.dp, Color.LightGray),
+                border = BorderStroke(1.dp, Color.LightGray),
             ) {
                 Row {
                     Icon(
@@ -261,7 +270,7 @@ fun RegisterPage(navController: NavHostController) {
                     containerColor = Color.White,
                     contentColor = Color.DarkGray,
                 ),
-                border= BorderStroke(1.dp, Color.LightGray),
+                border = BorderStroke(1.dp, Color.LightGray),
             ) {
                 Row {
                     Icon(

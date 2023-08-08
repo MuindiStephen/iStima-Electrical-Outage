@@ -1,6 +1,5 @@
 package com.example.istima.model
 
-
 /**
  * Stephen Muindi Implementation
  * @2023
