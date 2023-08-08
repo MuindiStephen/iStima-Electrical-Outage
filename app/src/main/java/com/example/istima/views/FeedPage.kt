@@ -98,7 +98,7 @@ fun FeedPage(navController: NavController) {
                     reportsList = emptyList()
                     Toast.makeText(
                         context,
-                        "No reported KPLC issues",
+                        "No reported electricity outage/issues",
                         Toast.LENGTH_SHORT
                     ).show()
                 }

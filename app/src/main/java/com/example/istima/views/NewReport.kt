@@ -94,10 +94,10 @@ fun NewReport(navController: NavHostController) {
     }
 
     var latitude by remember {
-        mutableStateOf(0.0)
+        mutableStateOf(34.31)
     }
     var longitude by remember {
-        mutableStateOf(0.0)
+        mutableStateOf(0.03131)
     }
 
     LaunchedEffect(Unit) {
@@ -193,7 +193,6 @@ fun NewReport(navController: NavHostController) {
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(bottom = elementHeight),
-//        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(elementHeight))
         Box(
@@ -411,7 +410,6 @@ fun NewReport(navController: NavHostController) {
                         .show()
 
                     navController.navigate("feed")
-
                 },
                 shape = RoundedCornerShape(cornerShape),
                 modifier = Modifier

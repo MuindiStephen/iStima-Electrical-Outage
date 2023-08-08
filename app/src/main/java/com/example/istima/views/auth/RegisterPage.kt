@@ -194,7 +194,7 @@ fun RegisterPage(navController: NavHostController) {
                         val newUser = NewUser(firstName, lastName, email, password, confirmPassword)
                         databaseReference.child(userId).setValue(newUser)
                         Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT).show()
-                        navController.navigate("main")
+                        navController.navigate("login")
                     } else {
                         Toast.makeText(
                             context,

@@ -118,7 +118,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun getLocationPermission() {
+    private fun getLocationPermission() {
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -150,7 +150,7 @@ class MainActivity : ComponentActivity() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationAppHost(navController: NavHostController, startDestination: String) {
-    val ctx = LocalContext.current
+    LocalContext.current
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable(Routes.MainPage.route) { MainPage(navController) }
