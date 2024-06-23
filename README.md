@@ -2,7 +2,7 @@
 
 ## About this app
 > What it does:
-- iStima records issue description, location data, date and time and then sends it to Safaricom where we use the data gathered to optimize the KPLC electricity power for the best customer experience.
+- iStima records issue description, location data, date and time and then sends it to the Backend (The other side of the World 😆: ) where we use the data gathered to optimize the KPLC electricity power for the best customer experience.
 - You can also report and view location of electrical calamity within the app.
 
 
